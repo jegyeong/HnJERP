@@ -1,0 +1,35 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+	<img src="${cPath}/resources/img/popup5.PNG">
+		<!-- popup -->
+				<form name=pop>
+					<p align="center"> <br><input type=checkbox name="Notice2" value="">다음부터 공지창 띄우지 않음<a href="javascript:history.onclick=closeWin()">[닫기]</a>
+				</form>
+</body>
+
+<script type="text/javascript">
+
+function setCookie( name, value, expiredays )
+{
+	var todayDate = new Date();
+	todayDate.setDate( todayDate.getDate() + expiredays );
+	document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + todayDate.toGMTString() + ";"
+}
+
+
+function closeWin()
+{
+	if ( document.pop.Notice2.checked )
+	setCookie( "Notice2", "done" , 1);//1은 하루동안 새창을 열지 않게 합니다.
+	self.close();
+}
+
+</script>
+
+</html>

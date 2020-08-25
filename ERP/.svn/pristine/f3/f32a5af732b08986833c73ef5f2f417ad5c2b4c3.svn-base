@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  [[개정이력(Modification Information)]]       -->
+<!--  	수정일      		수정자  		 수정내용              	 -->
+<!--  ==========   ======    ==============      -->
+<!--  2020. 7. 27       송효진    		 최초작성             		 -->
+<!--  Copyright (c) 2020 by DDIT All right reserved -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ERP.dao.order.IOr_Return_pDAO">
+	<!-- 반품등록 -->
+	<insert id="insertOrReturn" parameterType="Or_Return_PVO">
+		<selectKey resultType="int" keyProperty="or_retp_no" order="BEFORE">
+			SELECT NVL(MAX(or_retp_no), 0)+1 FROM OR_RETURN_P
+		</selectKey>
+		INSERT ALL
+			INTO OR_RETURN_P(
+				OR_RETP_NO, SHIP_NO, EMP_NO, OR_RETP_DATE, STATUS
+			) VALUES(
+				#{or_retp_no}, #{ship_no,jdbcType=NUMERIC}, #{emp_no,jdbcType=VARCHAR},
+				sysdate, 'Q001'
+			)
+			<if test="ret_pList != null">
+				<foreach collection="ret_pList" item="prod" index="idx">
+					INTO OR_RET_PLIST(
+						RET_LIST_NO, OR_RETP_NO, ORP_NO, RET_LIST_QTY, RET_COMMENT
+					) VALUES(
+						#{prod.ret_list_no}, #{or_retp_no}, #{prod.orp_no},
+						#{prod.ret_list_qty,jdbcType=NUMERIC}, #{prod.ret_comment,jdbcType=VARCHAR}
+					)
+				</foreach>
+			</if>
+		SELECT * FROM DUAL
+	</insert>
+	<!-- 상품반품목록 PK -->
+	<select id="selectOr_Ret_pListPK" resultType="int">
+		SELECT NVL(MAX(ret_list_no), 0)+1 FROM OR_RET_PLIST
+	</select>
+	
+	
+	
+	
+</mapper>

@@ -1,0 +1,98 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/plugins/fontawesome-free/css/all.min.css">
+  <!-- IonIcons -->
+  <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/dist/css/adminlte.min.css">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+<style>.page_break {page-break-before:always}</style>
+<c:if test="${chitlist != null }"><c:forEach items="${chitlist }" var="chit" begin="0" step="1" varStatus="i">
+<div class="page_break"></div><br style="height:0; line-height:0">
+	<div class='tableStyle'>
+	<table class="table table-bordered">
+		<tr>
+			<th colspan='2'>전표일자</th>
+			<td colspan='4'><text>${chit.chit_date }</text>
+		</tr>
+		<tr>
+			<th colspan='2'>전표유형</th>
+			<td colspan='4'>
+			<text>${chit.buy_sell }</text>
+		</tr>
+		<tr>
+			<th colspan='2'>거래처</th>
+			<td colspan='4'><text>${chit.buyer_name }</text>
+		</tr>
+		<tr>
+			<th colspan='2'>거래내역</th>
+			<td>
+			<div class="input-group input-group-sm form-inline">
+				<table>
+					<tr>
+						<th>품목</th>
+						<th>수량</th>
+						<th>가액</th>
+						<th>적요</th>
+					</tr>
+					<c:choose>
+					<c:when test="${chit.chitList!=null }">
+					<c:forEach items="${chit.chitList }" var="clist">
+						<tr>
+							<td>${clist.product }</td>
+							<td>
+							<input type="hidden" name='deal_no' value='${clist.deal_no }'>
+							<div class="col-xs-2">
+							<input type='number' name='qty' value='${clist.qty }' class="form-control col-xs-1" readonly>
+							</div>
+							</td>
+							<fmt:formatNumber value="${clist.price }" pattern="#,###" var="price"/>
+							<td><input type='text' name='price' value='${price }원' class="form-control" readonly></td>
+							<td><input type='text' name='summary' value='${clist.summary }' class="form-control" readonly></td>
+						</tr>
+					</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr>
+							<td colspan='4'>거래 품목이 없습니다.</td>
+						</tr>
+					</c:otherwise>
+					</c:choose>
+				</table>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<th colspan='2'>부서</th>
+			<td colspan='4'>
+				<text>${chit.dep_no }</text>
+			</td>
+		</tr>
+		<tr>
+			<th colspan='2'>총액</th>
+			<td colspan='4'>	<text><fmt:formatNumber value="${chit.pay }" pattern="#,###" />원</text>
+			</td>
+		</tr>
+	</table>
+	</div>
+		
+	</c:forEach>
+	</c:if>
+<script type="text/javascript">
+	var chitForm = $("#chitForm");
+	chitForm.on("submit", function(){
+		let btn = $("#updateBtn");
+		if($("#updateBtn").val()=='수정') {
+			event.preventDefault();
+			btn.val('저장');
+			$("input").removeAttr("readonly");
+			return false;}
+	});
+</script>

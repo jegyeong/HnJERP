@@ -1,0 +1,148 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix="c" %>    
+
+<%--
+* [[개정이력(Modification Information)]]
+* 수정일                 수정자      수정내용
+* ----------  ---------  -----------------
+* 2020. 7. 6      작성자명 박정민      최초작성
+* Copyright (c) 2020 by DDIT All right reserved
+ --%>
+ 
+ 
+ <link href="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.css" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.6.0/holder.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.js"></script>
+ <body>
+
+ <div style="margin-top: 50px; margin-left : 50px">
+<table
+  id="sectortable"
+  data-toggle = "table"
+  data-height="770"
+  data-show-header="true"
+  data-classes="table table-hover table-no-bordered"
+  data-sort-order="desc"
+  data-ajax="ajaxRequest"
+  >
+  <thead>
+    <tr>
+      <th data-field="EmpImg" data-formatter="EmpFormatter" data-title="" data-width="50">사원사진</th>
+      <th data-field="emp_name" data-width="50">사원이름</th>
+      <th data-field="prodImg" data-formatter = "ProdFormatter" data-sortable="true" data-align="center">상품사진</th>
+      <th data-field="prod_name"  data-sortable="true">생산 상품</th>
+      <th data-field="porder_date" data-sortable="true">작성 날짜</th>
+      <th data-field="prod_no" data-sortable="true" data-visible="false">작성 날짜</th>
+      <th data-field="emp_no" data-sortable="true" data-visible="false">작성 날짜</th>
+      <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents">의뢰서</th>
+      
+    </tr>
+  </thead>
+</table>
+</div>
+ </body>
+<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">회원 정보 상세 조회</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id = "modalbody">
+      
+      </div>
+      <div class="modal-footer">
+      
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="OrderFirm(event)">의뢰확정</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script type="text/javascript" src="${cPath }/resources/js/paging.js?time=${System.currentTimeMillis()}"></script>
+<script>
+
+function ajaxRequest(params) {
+    var url = '${cPath}/product/json';
+    $.get(url + '?' + $.param(params.data)).then(function (res) {
+      params.success(res)
+    })
+  }
+
+
+function EmpFormatter(value ,row) {
+	  
+	  let files = new Image;
+  	let filesrc = "${cPath}/resources/empImg/"+ row.emp_no +".jpg"
+  	files.src = filesrc
+  		
+  	let failimg = "'${cPath}/resources/images/100x150.svg'"
+  	
+  	let imgEle = '<img src="%T" style = "height : 50px; width : 50px; border-radius: 50%;" onerror = "this.src = %Y " >';
+  	imgEle = imgEle.replace("%T",filesrc).replace("%Y",failimg)
+		
+  return imgEle
+}
+function ProdFormatter(value ,row) {
+	  
+	  let files = new Image;
+  	let filesrc = "${cPath}/resources/prodImg/"+ row.prod_no +".png"
+  	files.src = filesrc
+  		
+  	let failimg = "'${cPath}/resources/images/100x150.svg'"
+  	
+  	let imgEle = '<img src="%T" style = "height : 100px" onerror = "this.src = %Y">';
+  	imgEle = imgEle.replace("%T",filesrc).replace("%Y",failimg)
+		
+  return imgEle
+}
+
+
+$('#tablebody').on("click",'tr', function() {
+	
+	var modal = $(this);
+	var modalbody = $(".modal-body")
+	
+	modalbody.load(modal.data("remote"));
+
+}).css({
+		cursor:"pointer"
+	});
+
+
+var listBody = $("#tablebody");
+
+var win;
+function operateFormatter(value, row, index) {
+    return [
+      '<a class="report" href="javascript:void(0)" title="Like">',
+      '<i class="fa fa-folder"></i>',
+      '</a>  '
+    ].join('')
+  }
+
+  window.operateEvents = {
+    'click .report': function (e, value, row, index) {
+    	console.log(row.porder_no)
+    	win = window.open("${cPath}/product/" + row.porder_no, "PopupWin", "width=600,height=700");
+    }
+    
+  }
+
+function closeWindow(event){
+	  console.log("aaa")
+	  win.close();
+	  window.location.reload()
+  }
+
+</script>
+
+

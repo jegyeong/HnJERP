@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "kinetic-primer-285106",
+  "private_key_id": "189abe06c71377541d08180b4cb8c9d1f6a82b04",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQD34nz+Z8e/TAsm\nJKJDGm6WVFQlHQtkcE7PCSlS5P4a3x5nf45CD9A9KVJ7edQbpY5vHnA5WDxtqKeb\nife1FYv+DjPGF6jWgf0vG0H4HfexDEJuaktSs410RM1JjXcQ5og+JileUoHbOrAH\nazrPyaXsJqM7nrtydPfPqeyXwU7ZP2xBTd4zIMQlPFP0UV1XUsek/Nx4oMrRVViz\no7btGfq/oVPqUEwO37hdIw5VloQXny/V7Gj+Rce2acfQX4Ftbf9zhvvec9GsLUJG\n4NHQNqfhIn1ARpCHly6pxbV6wK0fdxitLiu4P4GAxFOUYdDslBP2lNBf4lUmcUUM\n/fMlVbqbAgMBAAECggEAKLWmh3VtxYnsjtAXYePWY5Pn2cyCUXVsS+4aPkXjQXCB\nIsg9CbZlIZZGuIaSghPXZ4JdNd261tuK4y1uY+vs+MVGVXMPRGNGvFTCqcfqJMZ5\npn6IbkWUppKiEEFOW5UwrNxBkP8F2oYx4JYIq5VXTYgu6Jyx9iMli5JBi86wb1b7\nZzEQ1LuHKYJU//jtkSHA1cnMs2kdZiKjsJ0qkCiok5+8g5/lb9fCY7MvgoCEVT3m\nAeOyIS6DFYHDuB4WOWCakDaDKZgjtT6GsuvMJPNmRgBDdn6YqjoO9a8zhEniYiLb\ncDz12DDS+8WSPpRbwUsVu17wWnDGmDEsuooM8aAS8QKBgQD8yzfT8nZqdDkPFEEE\nqI/h3k/YNhUSdqUUQOsm0i//SbhEmE5uSubHjL8eF9DhFGjW4g4aGhnTo8Ls1FUr\nQEASWndBCxdAPQAwvSxlQfRuFIK2OXX3IM6F3XydL6Z84jYJTZoiGXgBNBDeWbay\nNqgXLVOM5XpI/spFfI8XZwXV4wKBgQD7B1TC1JnMYfySw7av7OFwQ6z7MVp9RBFi\n70mTtna/0wu2KjR0tmkCzvkvflkh9bh4ZtRLTXotNFXQWvjAUZk/EOa9LYYpRRIY\n8sCNjT8tCnoE8fpEX6ekHlEbEIibajPSYsegLUjFADfq0c8ZV+0zLArrxevdOjvr\nVG2iQybl6QKBgErL2i3k/LKMxuE2TfKR6VicTaWcgumen0N53dnzsO3pIxNwuSwb\nD2OVumquA0jFoCuMYT3J4UBkoOUwAi806IBFsilVncCNDARfxMYFGMyFVxORttyz\nIUgse5WKpskmqXRhOKzEOmSowiD4DH14fI23BJSYxXDZqoGa1D/JZMmfAoGBANya\nsriNkaN1sTthV5j/eZbpQol18+oF+amSVHzFa1Jkq/Qo3vR6oYpgTciZJsebY8Qb\nyhFrQyWaypdSeyy4CQ7NUZmK+k4mbyMRonpDWPPCMz1JUgDodzDZm7lHLGY4TNZl\nDL4NTdgiuwFX5MKG7ON9nxNYWlGOrb2/8qEYloSRAoGAPgsalJvldkeLwqyalQ8Z\nIkcx8WYHJgApBCo+H8huvWe3iQbjC3eQqsd850Q8Mvqaw1XhFVii+xcXpTJS5ii+\ncG9ohkqfnvNGXmJGqoO69OEZfqrArUEL9Ywvh8Znwu1C8I4EIxGzgrK7B3gq8w9k\nkgliUQSvQqoLV30dMECtfCw=\n-----END PRIVATE KEY-----\n",
+  "client_email": "park-931@kinetic-primer-285106.iam.gserviceaccount.com",
+  "client_id": "111730558047040331271",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/park-931%40kinetic-primer-285106.iam.gserviceaccount.com"
+}

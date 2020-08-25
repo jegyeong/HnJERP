@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ERP.dao.emp.IWorkDAO">
+<sql id="searchFrag">
+			WHERE A.DEP_NO2 IS NOT NULL <!-- 부서가 NOT NULL이 아닐때 -->
+		<if test="detailSearch!=null">
+		  	<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.work_date)">
+				 AND c.work_date BETWEEN  TRUNC(to_date(#{detailSearch.work_date}),'MM') AND LAST_DAY(to_date(#{detailSearch.work_date}))<!-- 날짜를 검색했을 때 -->
+			 </if>
+			 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.dep_no2)">
+					and a.dep_no2 = #{detailSearch.dep_no2}
+			 </if>		 
+			 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.dep_no)">
+					and a.dep_no = #{detailSearch.dep_no}
+			 </if>		 
+		 </if>
+</sql>
+	
+
+<!-- 일일근태 등록 -->
+<select id="insertWork" parameterType="WorkVO">
+	INSERT INTO  work (emp_no, work_date, work_time, offwork_time)
+	    VALUES(#{emp_no}, to_date(#{work_date}, 'YYYY-MM-DD'), to_date(#{work_time}, 'hh24:mi:ss'), to_date(#{offwork_time},'hh24:mi:ss'));
+</select>
+
+<!-- 일일근태 삭제   는 없음
+<delete id="deleteWork">
+
+</delete>
+-->
+
+<!-- 일일근태 수정 -->
+<update id="updateWork" parameterType="WorkVO">
+		UPDATE WORK
+		SET
+			 emp_no= #{emp_no},
+			 work_date = to_date(#{work_date},'YYYY-MM-DD'),
+			 work_time = to_date(#{work_time},'YYYY-MM-DD'),
+			 offwork_time = to_date(#{offwork_time},'YYYY-MM-DD')
+	    where emp_no= #{emp_no}
+
+</update>
+
+
+<!-- 리스트 나오는거 --> 
+<select id="selectWorkList" resultType="WorkVO"  parameterType="PagingVO">
+	SELECT A.*
+	FROM(
+		select ROWNUM rnum, z.*
+		 from (
+			SELECT a.dep_name dep_no, a.dep_no2 , b.emp_no, b.emp_name, c.work_date, c.work_time, c.offwork_time , d.POS_NAME pos_no
+			  FROM DEPARTMENT a left outer join employee b on(a.dep_no=b.dep_no)
+								left outer join work c on(b.emp_no = c.emp_no)
+								left outer join position d on(b.pos_no = d.pos_no)
+								<include refid="searchFrag"/>
+			START WITH a.DEP_NO = b.dep_no
+			CONNECT BY a.DEP_NO = PRIOR a.DEP_NO2
+			order by work_date desc
+			) z
+		) A
+	where A.rnum between #{startRow} and #{endRow}
+	 order by work_date desc
+
+</select>
+
+
+<!-- 리스트 하나 선택 했을 때 나오는거  -->
+<select id="selectWork" parameterType="string" resultType="WorkVO" >
+	SELECT ROWNUM RNUM, a.dep_name dep_no, a.dep_no2 , b.emp_no, b.emp_name, c.work_date, c.work_time, c.offwork_time , d.POS_NAME pos_no
+		  FROM DEPARTMENT a left outer join employee b on(a.dep_no=b.dep_no)
+							left outer join work c on(b.emp_no = c.emp_no)
+							left outer join position d on(b.pos_no = d.pos_no)
+		where b.emp_no= #{emp_no}
+</select>
+
+
+<!-- 페이징 -->
+ <select id="selectWorkCount" parameterType="PagingVO" resultType="int">
+		select count(*)
+		FROM DEPARTMENT a left outer join employee b on(a.dep_no=b.dep_no)
+							left outer join work c on(b.emp_no = c.emp_no)
+							left outer join position d on(b.pos_no = d.pos_no)
+			
+		<include refid="searchFrag"/>
+		START WITH a.DEP_NO = b.dep_no
+		CONNECT BY a.DEP_NO = PRIOR a.DEP_NO2
+</select>
+
+
+
+	
+	<!-- ............................................................. -->
+	
+	<!-- 검색 -->
+	<sql id="searchFrag1">
+		FROM WORK W LEFT OUTER JOIN EMPLOYEE E ON(E.EMP_NO=W.EMP_NO)
+		            LEFT OUTER JOIN DEPARTMENT D ON(D.DEP_NO=E.DEP_NO)
+		            LEFT OUTER JOIN POSITION P ON(P.POS_NO=E.POS_NO)
+		<trim prefix=" WHERE " prefixOverrides="AND">
+			<if test="detailSearch!=null">
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.or_date)">
+				<!-- 	AND O.OR_DATE >= TO_DATE(#{detailSearch.or_date})  -->
+				</if>
+				<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.or_dateEnd)">
+					<![CDATA[
+					<!-- AND	O.OR_DATE < TO_DATE(#{detailSearch.or_dateEnd})+1  -->
+					]]> 
+				</if>
+			</if>
+		</trim>
+	</sql>
+	
+	<!--  월간 리스트 나오는거  -->
+	 <select id="selectMonthWorkCount" parameterType="PagingVO" resultType="int">
+		SELECT COUNT(*)
+		FROM WORK W LEFT OUTER JOIN EMPLOYEE E ON(E.EMP_NO=W.EMP_NO)
+		            LEFT OUTER JOIN DEPARTMENT D ON(D.DEP_NO=E.DEP_NO)
+		            LEFT OUTER JOIN POSITION P ON(P.POS_NO=E.POS_NO)
+			WHERE W.WORK_DATE BETWEEN TO_CHAR(TO_DATE(NVL(#{detailSearch.work_date,    jdbcType=DATE},'19000101')),'YYYYMM')||'01' 
+			AND LAST_DAY(TO_DATE(NVL(#{detailSearch.work_date,    jdbcType=DATE},SYSDATE)))
+	
+	</select> 
+	
+	<select id="selectMonthList" parameterType="PagingVO" resultType="WorkVO">
+	SELECT * FROM(
+		select ROWNUM RNUM, a.*
+		from (SELECT DISTINCT   TO_CHAR(W.WORK_DATE,'YYYY-MM') WORK_DATE,
+		       W.EMP_NO, E.EMP_NAME, 
+		       D.DEP_NAME DEP_NO,
+		       P.POS_NAME POS_NO,
+               (SELECT COUNT(1) FROM WORK B WHERE TO_CHAR(WORK_TIME,'HH') > 8 AND E.EMP_NO = B.EMP_NO AND TO_CHAR(B.WORK_DATE,'YYYYMM')=TO_CHAR(W.WORK_DATE,'YYYYMM')) lateTimeCnt,
+               (SELECT COUNT(1) FROM WORK B WHERE E.EMP_NO = B.EMP_NO AND TO_CHAR(B.WORK_DATE,'YYYYMM')=TO_CHAR(W.WORK_DATE,'YYYYMM')) workCnt,
+		       (SELECT SUM(CASE WHEN TO_CHAR(B.OFFWORK_TIME,'HH24')-20 > 0 THEN TO_CHAR(B.OFFWORK_TIME,'HH24')-20 ELSE 0 END) FROM WORK B WHERE E.EMP_NO = B.EMP_NO AND TO_CHAR(B.WORK_DATE,'YYYYMM')=TO_CHAR(W.WORK_DATE,'YYYYMM')) extendsTime,
+               (SELECT COUNT(1) FROM WORK B WHERE E.EMP_NO = B.EMP_NO AND TO_CHAR(B.WORK_DATE,'YYYYMM')=TO_CHAR(W.WORK_DATE,'YYYYMM') 
+               AND <![CDATA[TO_CHAR(B.OFFWORK_TIME,'HH24')-17<0]]>) earlyCnt
+               ,(SELECT COUNT(1)
+                FROM (SELECT TO_CHAR(SDT + LEVEL - 1, 'YYYYMMDD') DT
+                             ,TO_CHAR(SDT + LEVEL - 1, 'D') D
+                      FROM (SELECT TO_DATE(TO_CHAR(TO_DATE(NVL(#{detailSearch.work_date,    jdbcType=DATE},SYSDATE)),'YYYYMM')|| '01', 'YYYYMMDD') SDT
+                      , LAST_DAY(TO_DATE(NVL(#{detailSearch.work_date,    jdbcType=DATE},SYSDATE))) EDT
+                   FROM DUAL)
+         CONNECT BY LEVEL <![CDATA[<=]]> EDT - SDT + 1
+         ) A
+         WHERE A.D NOT IN ('1', '7')) offTimeCnt
+		FROM WORK W LEFT OUTER JOIN EMPLOYEE E ON(E.EMP_NO=W.EMP_NO)
+		            LEFT OUTER JOIN DEPARTMENT D ON(D.DEP_NO=E.DEP_NO)
+		            LEFT OUTER JOIN POSITION P ON(P.POS_NO=E.POS_NO)
+			WHERE W.WORK_DATE BETWEEN TO_CHAR(TO_DATE(NVL(#{detailSearch.work_date,    jdbcType=DATE},'19000101')),'YYYYMM')||'01' 
+			AND LAST_DAY(TO_DATE(NVL(#{detailSearch.work_date,    jdbcType=DATE},SYSDATE)))
+		order by  TO_CHAR(W.WORK_DATE,'YYYY-MM') desc)	a
+		)
+		where rnum between #{startRow} and #{endRow}
+	</select>
+
+</mapper>
+
+
+

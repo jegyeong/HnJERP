@@ -1,0 +1,48 @@
+package ERP.controller.buy;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import ERP.dao.IBuyerDAO;
+import ERP.service.IBuyerService;
+import vo.BuyerVO;
+
+@Controller
+@RequestMapping("/buyer")
+public class BuyerRead {
+	@Inject
+	IBuyerService service;
+	@Inject
+	IBuyerDAO dao;
+	
+	@GetMapping
+	public String list() {
+		return "buyerList";
+	}
+	
+	@GetMapping(produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public Map<String, List<BuyerVO>> dataTableList(){
+		Map<String, List<BuyerVO>> map = new HashMap<>();
+		map.put("data", dao.dataTableBuyerList());
+		return map;
+	}
+	
+	@GetMapping("{buyer_no}")
+	public String view(@PathVariable(required = true)  String buyer_no, Model model) {
+		BuyerVO buyer = service.readBuyer(buyer_no);
+		model.addAttribute("buyer", buyer);
+		return "/buyerView";
+	}
+}

@@ -1,0 +1,183 @@
+<%--
+* [[개정이력(Modification Information)]]
+* 	수정일                 수정자      	수정내용
+* ----------  ---------  -----------------
+* 2020. 7. 5      	이제경       	최초작성
+* Copyright (c) 2020 by DDIT All right reserved
+ --%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+
+<h1 style="padding-left: 30px;padding-top: 25px;">출하지시서폼</h1>
+
+<style>  
+table { border-collapse:collapse; }  
+th, td { border:1px solid gray; }
+</style>
+
+
+<form:form id="deliveryForm" modelAttribute="delivery" method="post" enctype="multipart/form-data" class="#"
+	action="${cPath }/order/delivery/${delivery.deliv_no }">
+	
+	<c:if test="${not empty delivery.deliv_no }">
+		<input type="hidden" name="_method" value="${'delete' eq methodType ?'delete':'put' }">
+	</c:if>
+	
+	<input class="form-control" type="hidden" name="currentPage" value="${param.currentPage }"/>
+
+<div style="background-color: white; margin: 30px; margin-right: 55px;">	
+	<table class="table table-bordered">
+		<tr>
+			<th><spring:message code="delivery.deliv_no" /></th>
+			<td><input type="text" value="${delivery.deliv_no }"></td>
+		</tr>
+		<tr>	
+			<th><spring:message code="order.or_no" /></th>
+			<td>
+				<input type="text" name="or_no" value="${order.or_no }">
+				
+<!-- 				<input type="button" id="orderBtn" value="주문서검색"> -->
+			</td>
+		</tr>
+		<tr>
+			<th><spring:message code="date" /></th>
+			<td><input type="date" name="deliv_date" value="${delivery.deliv_date }"></td>
+		</tr>
+		<tr>
+			<th><spring:message code="emp.emp_name" /><input type="button" id="empBtn" class="btn btn-outline-dark" value="찾기"/>
+			</th>
+			<td><input type="text" name="emp_no" id="empNo" value="${order.emp_no }" placeholder="담당자코드" />
+				<input type="text" id="empName" value="${order.emp_name }" placeholder="담당자명"/></td>
+<!-- 			<td><input type="button" id="empBtn" class="btn btn-outline-dark" value="찾기"/></td> -->
+		</tr>
+		
+<!-- 		<tr> -->
+<%-- 			<th><spring:message code="buyer.buyer_name" /></th> --%>
+<%-- 			<td><input type="text" name="est_buyer" value="${delivery.deliv }"></td> --%>
+<!-- 		</tr> -->
+		<tr>
+			<th><spring:message code="delivery.deliv_schd" /></th>
+			<td><input type="date" name="deliv_schd" value="${delivery.deliv_schd }"></td>
+		</tr>
+
+	</table>
+</div>
+<div style="background-color: white; margin: 30px; margin-right: 55px;">	
+	<table class="table table-bordered">
+		<tbody>
+			<tr>
+				<td>
+				<table id="delivTable">
+					<tr>
+						<th>#</th>
+						<th><spring:message code="prod_code" /></th>
+						<th><spring:message code="prod_name" /></th>
+						<th><spring:message code="prod_standard" /></th>
+						<th><spring:message code="prod_qty" /></th>
+						
+					</tr>
+					<tr>
+						<c:choose>
+<%-- 						<c:when test="${not empty delivery }"> --%>
+<%-- 						<c:if test="${delivery!=null }"> --%>
+<%-- 						<c:if test="${delivery.order!=null }"> --%>
+<%-- 						<c:forEach items="${delivery.order }" var="order"> --%>
+							<c:when test="${not empty order }">
+							<c:if test="${order.orderList!=null }">
+								<c:forEach items="${order.orderList }" var="oList">
+									<c:if test="${oList.prodList!=null }">
+									<c:forEach items="${oList.prodList }" var="pList">
+										<tr>
+											<td></td>
+											<td>${pList.prod_no }</td>
+											<td>${pList.prod_name }</td>
+											<td>${pList.prod_standard }${pList.prod_stand_size }</td>
+											<td>${oList.orp_qty }</td>
+										</tr>
+									</c:forEach>
+									</c:if>
+								</c:forEach>
+							</c:if>
+<%-- 						</c:forEach> --%>
+<%-- 						</c:if> --%>
+<%-- 						</c:if>	 --%>
+<%-- 						</c:when>		 --%>
+							</c:when>
+						</c:choose>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		</tbody>
+<!-- 		<tfoot> -->
+<!-- 			<tr> -->
+<!-- 				<td colspan="2"> -->
+<!-- 					<input type="submit" value="저장"> -->
+<!-- 					<input type="button" value="초기화"> -->
+<%-- 					<input type="button" value="목록으로" onclick="location.href='<c:url value="/order/delivery"/>'" /> --%>
+<!-- 				</td> -->
+<!-- 			</tr> -->
+<!-- 		</tfoot> -->
+	</table>
+</div>
+<div id="button"  style="margin: 30px; margin-right: 55px;">
+	<input type="submit" class="btn btn-dark" value="저장">
+	<input type="button" class="btn btn-dark" value="초기화">
+	<input type="button" class="btn btn-dark" value="목록으로" onclick="location.href='<c:url value="/order/delivery"/>'" />
+</div>	
+	
+</form:form>
+
+<!-- 담당자 모달창 -->
+<div class="modal fade" id="exampleModal"  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      
+      </div>
+      <div class="modal-footer">
+<!--       	<button type="button" id="matAddBtn" class="btn btn-primary mr-2" data-dismiss="modal">추가</button> -->
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script type="text/javascript" src="${cPath}/resources/js/modalView.js"></script>
+<script type="text/javascript"src="${pageContext.request.contextPath }/resources/js/dynamicSelect.js?time=${System.currentTimeMillis()}"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/resources/js/paging.js?time=${System.currentTimeMillis()}"></script>
+<script type="text/javascript">
+
+
+//담당자모달창---------------------------------------------------------------------------------------------
+   var exampleModal = $("#exampleModal").modal({
+		show:false
+	}).on("hidden.bs.modal", function(){
+		exampleModal.find(".modal-body").empty();
+	});
+   //사원 목록 모달창
+   modalView({
+	  noText : "#empNo",      //사원 클릭 시, 입력될 태그 지정
+	  nameText : "#empName",  //사원 클릭 시, 입력될 태그 지정
+	  clickBtn : "#empBtn",        //모달창을 띄울 버튼 지정
+      urlPath : "${cPath}/buy/document/empModal",
+      title:"사원 목록"				//제목
+   });
+
+//상품붙이기---------------------------------------------------------------------------------------------
+
+
+</script>
+
+
+

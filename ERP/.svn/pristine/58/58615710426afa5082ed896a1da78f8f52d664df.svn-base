@@ -1,0 +1,216 @@
+ <!-- Main Sidebar Container -->
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+  <aside class="main-sidebar sidebar-dark-primary elevation-4  position-fixed" style="height:100vh">
+    <!-- Brand Logo -->
+    <a href="${cPath }/main" class="brand-link">
+     <img alt="로고" src="${pageContext.request.contextPath }/resources/img/logo3.png" style="width: 80px; height: 40px;">
+      <span class="brand-text font-weight-light">HnJ ERP</span>
+    </a>
+    <!-- Sidebar -->
+<div class="sidebar">
+
+	<div class="user-panel mt-3 pb-3 mb-3 d-flex">
+		<table style='width:100%'>
+			<tr>
+				<td>
+					&nbsp;<img id="emp_img" class='img-circle elevation-2' alt="" src="${cPath }/resources/empImg/${authUser.emp_no}">
+				</td>
+				<td>
+					<a href="${cPath }/mypage/myInfo/myEmpInformation" class="d-block">
+						${authUser.depVO.dep_name} &nbsp;ㅣ ${authUser.emp_name}
+					</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+      
+      
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+         
+          <!-- 인사관리  -->
+           <li class="nav-item has-treeview" data-url="/emp/manage">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie"></i>
+                	<p>인사관리</p>
+                <i class="right fas fa-angle-left"></i>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="${cPath}/emp/manage/empList" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>사원관리</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="${cPath}/emp/manage/ann/announcementList" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>인사발령</p>
+                </a>
+              </li>
+              
+              <li class="nav-item">
+                <a href="${cPath}/emp/manage/departmentList" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>부서별인사현황</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <!-- 인사관리 끝  -->
+         
+          <!-- 근태관리 -->
+           <li class="nav-item has-treeview" data-url="/emp/work">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie" ></i>
+              <p>
+                	근태관리
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="${cPath}/emp/work/dailyList" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>일일근태관리</p>
+                </a>
+              </li>
+              <%-- <li class="nav-item">
+                <a href="${cPath}/emp/work/dailyForm" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>일일근태관리</p>
+                </a>
+              </li> --%>
+              <li class="nav-item">
+                <a href="${cPath}/emp/work/monthList" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>월간근태관리</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+           <!-- 근태관리 끝 -->
+         
+         
+         <!-- 근로소득관리 -->
+          <li class="nav-item has-treeview" data-url="/emp/salary">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>
+                	급여관리
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="${cPath}/emp/salary/salaryInfoList" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>급여내역</p>
+                </a>
+              </li>
+               <li class="nav-item">
+                <a href="${cPath}/emp/salary/salaryCal" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>급여정책</p>
+                </a>
+              </li> 
+            </ul>
+          </li>
+            <!-- 근로소득관리 끝 -->
+            
+           
+           
+           <!-- 퇴직소득관리 -->
+           <li class="nav-item has-treeview" data-url="/emp/retire">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>
+                	퇴직관리
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="${cPath}/emp/retire/retireTrans" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>퇴직금 관리</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="${cPath}/emp/retire/empRetirmentList" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>퇴사 사원관리</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <!-- 퇴직소득관리 끝 -->
+          
+          <!-- 일정관리  -->
+           <li class="nav-item has-treeview" data-url="/emp/register">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>
+                	일정관리
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+	           <li class="nav-item" data-url="/emp/register">
+	                <a href="${cPath}/emp/register/calendar/admin" class="nav-link">
+	                 <i class="far fa-circle nav-icon"></i>
+	                 	 <p>일정관리</p>
+	                </a>
+	          </li>  
+            </ul>
+          </li>
+          <!-- 일정관리 끝  -->   
+          
+          <!-- 공지사항관리 -->
+           <li class="nav-item has-treeview" data-url="/notice">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>
+                	공지사항
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+	           <li class="nav-item" data-url="/notice">
+                <a href="${cPath}/notice" class="nav-link">
+	                  <i class="far fa-circle nav-icon"></i>
+	                 	 <p>공지사항</p>
+	                </a>
+	          </li>  
+            </ul>
+          </li>
+            <!-- 공지사항관리 -->   
+        </ul>
+        <!-- 맨 처음 ul태그 끝 -->
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+  <script>
+  var currenturl = "${cPath}" + "${requestScope['javax.servlet.forward.servlet_path']}"; 
+  console.log(currenturl);
+     $("li").each(function(){
+        
+        let url = $(this).data("url")
+        if(currenturl.indexOf(url)==4){
+           $(this).addClass("menu-open").find("i").eq(0).addClass("text-info");
+           $(this).find("a").each(function(){
+             if($(this).attr("href")==currenturl)
+                $(this).find("i").eq(0).addClass("text-info");
+           });
+        }
+     });
+     
+     
+     $(".has-treeview").on("click", function(event){
+         $(".menu-open").not(this).find("i").eq(0).click();
+    });
+  </script>

@@ -1,0 +1,21 @@
+package ERP.service.mypage;
+
+import enums.ServiceResult;
+import vo.emp.EmployeeVO;
+import vo.emp.Salary_TransVO;
+
+public interface IMyinfoService {
+
+	// 내정보 
+	public ServiceResult modifyMyinfo(EmployeeVO vo);
+	public EmployeeVO readMyinfo(EmployeeVO vo);
+	
+	public ServiceResult creatModalCert(EmployeeVO vo); // 사원 자격증 선택
+
+
+	// 내 급여
+//	public EmployeeVO readMySalary(EmployeeVO vo); // 내정보 가져오는거 
+	public Salary_TransVO readMyMoney(Salary_TransVO vo);
+	
+	
+}

@@ -1,0 +1,39 @@
+package ERP.controller.buy;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import ERP.dao.buy.IBuy_InCostDAO;
+import vo.order.Or_ShipmentVO;
+import vo.wareHouse.MaterialVO;
+
+@Controller
+@RequestMapping("/buy/incost")
+public class InCostController {
+	
+	@Inject
+	IBuy_InCostDAO dao;
+	
+	@GetMapping()
+	public String list(){
+		return "buy/incost/inCostList";
+	}
+	
+	@GetMapping(produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public Map<String, List<MaterialVO>> dataTableList(){
+		Map<String, List<MaterialVO>> map = new HashMap<>();
+		map.put("data", dao.selectInCostList());
+		return map;
+	}
+	
+}

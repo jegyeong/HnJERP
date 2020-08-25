@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ERP.dao.wareHouse.IChartDAO">
+	<select id="matReOuterChart" resultType="ChartVO">
+		select count(*) cnt, a.mat_no, a.mat_name
+		from material a 
+			inner join buy_or_mat b on(a.mat_no = b.mat_no)
+			inner join buy_ret_m c on(b.ormat_code = c.ormat_code)
+			inner join MATERIAL_OUT d on(c.retmat_no = d.retmat_no)
+		group by a.mat_no,a.mat_name
+	</select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xsi:schemaLocation="http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!-- 웹소켓 서버 구축 단계 -->
+<!-- 1. spring-websocket 의존성 추가 -->
+<!-- 2. WebSocketHandler 구현체 작성 및 등록 -->
+<!-- 3. websocket handler 를 매핑 설정. -->
+	<bean id="socketHandler" class="ERP.controller.account.SocketHandler"/>
+	<websocket:handlers allowed-origins="http://localhost">
+		<websocket:mapping handler="socketHandler" path="/socket"/>
+		<websocket:handshake-interceptors> 
+			<bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor" /> 
+		</websocket:handshake-interceptors>
+		<websocket:sockjs client-library-url="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.5/sockjs.js" suppress-cors="true" />
+	</websocket:handlers>
+	
+</beans>

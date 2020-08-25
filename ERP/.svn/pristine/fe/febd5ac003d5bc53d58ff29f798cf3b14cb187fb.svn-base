@@ -1,0 +1,27 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+   <table id="estTable" class="table table-hover">
+   		<thead>
+   			<tr>
+   				<th>주문서번호</th>
+   				<th>작성일자</th>
+   				<th>담당자명</th>
+   				<th>거래처명</th>
+   				<th>진행상태</th>
+   			</tr>
+   		</thead>
+   		<tbody>
+   			<c:if test="${not empty estList }">
+   				<c:forEach items="${estList }" var="est">
+   					<tr>
+   						<td class="est_no">${est.est_no }</td>
+   						<td>${est.est_date }</td>
+   						<td>${est.emp_no }</td>
+   						<td>${est.buyer_name }</td>
+   						<td>${est.est_prog }</td>
+   					</tr>
+   				</c:forEach>
+   			</c:if>
+   		</tbody>
+   </table>    

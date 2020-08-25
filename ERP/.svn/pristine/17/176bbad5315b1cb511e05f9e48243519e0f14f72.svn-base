@@ -1,0 +1,308 @@
+    <%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+   <!-- Link Swiper's CSS -->
+  <link rel="stylesheet" href="${cPath }/resources/css/silder.css">
+   <!-- Demo styles -->
+  
+  
+  
+  
+<h2></h2>
+<!-- Main content -->
+
+<!--////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  -->
+<div>
+<div class="content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-6" style="padding:50px;">
+				<!-- 달력  -->
+
+	<iframe src="${cPath}/myCalendar/official" style="width:850px; height:915px;" scrolling="no" ></iframe>
+			
+		</div> 
+		
+	
+
+		<!-- /.col-md-6 -->
+		<div class="col-lg-6" style="padding-top: 50px; padding-left : 100px; ">
+			<div class="card card-primary card-outline"  style="width:500px">
+				<div class="card-header" >
+					<h5 class="m-0">빠른업무</h5>
+				</div>
+				<div class="card-body">
+					<div style='float:left;'><a class='path' href="#"><img src="${cPath }/resources/img/insert.png" style="width:70px; height:70px; margin: 0 50px 0 0 ;"/></a></div>
+					<div style='float:left;'><a class='path' href="#"><img src="${cPath }/resources/img/doc1.png"  style="width:70px; height:70px; margin:0 50px 0 0; " /></a> </div>
+					<div style='float:left;'><a class='path' href="#"><img src="${cPath}/resources/img/doc2.png" style="width:70px; height:70px; margin: 0 50px 0 0;"/></a>    </div>
+					<div style='float:left;'><a class='path' href="#"><img src="${cPath }/resources/img/doc3.png " style="width:70px; height:70px;"/></a>                      </div>
+				</div>
+			</div>
+
+			<div class="card card-primary card-outline" style="width:500px;">
+					<div class="card-header">
+						<h5 class="m-0">공지사항</h5>
+					</div>
+					<div id ='notice' class="card-body">
+	<!-- 				슬라이드 -->
+					<div class="container">
+						<div class="hero__title" id="animatedHeading">
+						</div>
+					</div>
+						</div>
+			</div>
+			
+		<!-- 	<div class="col-md-6"> -->
+	            <div class="card card-primary card-outline" style="width:500px; height:600px;" >
+	              <div class="card-header">
+	                <h5 class="m-0">안내</h5>
+	              </div>
+	      		  <div class="card-body">
+	                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+	                  <ol class="carousel-indicators">
+	                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+	                    <li data-target="#carouselExampleIndicators" data-slide-to="1" class=""></li>
+	                    <li data-target="#carouselExampleIndicators" data-slide-to="2" class=""></li>
+	                  </ol>
+	                  <div class="carousel-inner" >
+	                    <div class="carousel-item carousel-item-next carousel-item-left mySlides" >
+	                      <img class="d-block w-100 " src="${cPath }/resources/img/popup1.png" alt="First slide" style="height:500px;">
+	                    </div>
+	                    <div class="carousel-item  carousel-item mySlides">
+	                      <img class="d-block w-100" src="${cPath }/resources/img/popup2.png" alt="Second slide" style="height:500px;">
+	                    </div>
+	                    <div class="carousel-item  carousel-item mySlides">
+	                      <img class="d-block w-100" src="${cPath }/resources/img/popup3.PNG" alt="Third slide" style="height:500px;"> 
+	                    </div>
+	                  </div>
+	                  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+	                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+	                    <span class="sr-only">Previous</span>
+	                  </a>
+	                  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+	                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+	                    <span class="sr-only">Next</span>
+	                  </a>
+	                </div>
+	              </div>
+            </div>
+            <!-- /.card -->
+        <!--   </div> -->
+			
+		</div>
+		<!-- /.col-md-6 -->
+		
+		
+	</div>
+	<!-- /.row -->
+</div>
+<!-- /.container-fluid -->
+ </div>
+<!-- /.content -->
+ </div>
+ <form id="searchForm" action="${cPath}/notice">
+</form>
+
+
+
+<!-- Swiper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/resources/js/paging.js"></script>
+<script type="text/javascript">
+var url = {'회계부서':['/chit','/fixAssets','/table/plusMinus','/pm/productly'],
+ 			'구매부서':['/order/form','/purchase/form','/incost','er'],
+			'인사부서':['/work/monthList','/salary/salaryInfoList','/manage/empList','/register/calendar/admin'],
+			'자재부서':['/mat/list','/outer/prod/prodlist','house','/enter/mat/requestlist'],
+			'생산부서':['product','report'],
+			'영업부서':['/estimate','/order','/transDetails','/return']};
+var word = {'회계부서':['전표승인','고정자산등록','재무상태표','상품별매출 '],
+'구매부서':['발주등록','매입등록','단가등록','거래처조회'],
+'자재부서':['원자재목록','출고관리(상품)','창고조회','입고관리'],
+'인사부서':['월간근태관리','급여내역','사원관리','일정관리'],
+'생산부서':['생산의뢰서','생산보고서'],
+'영업부서':['견적서조회','주문서조회','거래명세서','매출반품']};
+
+var code ={
+'회계부서':'${cPath}/account',
+'구매부서':'${cPath}/buy',
+'인사부서':'${cPath}/emp',
+'자재부서':'${cPath}/ware',		
+'생산부서':'${cPath}/',		
+'영업부서':'${cPath}/order',
+	}
+
+
+function set(){
+	if(''=='${authUser.dep_no}'){
+		for(let i = $(".path").length-1; i >= 0; i--){
+		$(".path").eq(i).remove();
+		}
+	}else{
+		var urlset = url.${authUser.dep_no2 == null? 's1':authUser.dep_no2};
+		var wordset = word.${authUser.dep_no2 == null? 's1':authUser.dep_no2};
+		var codeurl = code.${authUser.dep_no2 == null? 's1':authUser.dep_no2};
+		if(wordset.length == 2) {
+			$(".path").eq(3).remove();
+			$(".path").eq(2).remove();
+		}
+		for(let i = 0; i < wordset.length; i++){
+			$(".path").eq(i).attr("href",codeurl+urlset[i]).append($("<p>").css("flaot","left").text(wordset[i]));
+// 			$(".word").eq(i).text(wordset[i]);
+		}
+	}
+}
+
+set();
+function getCookie( name ){
+	var nameOfCookie = name + "=";
+	var x = 0;
+	while ( x <= document.cookie.length )
+	{
+	var y = (x+nameOfCookie.length);
+	if ( document.cookie.substring( x, y ) == nameOfCookie ) {
+	if ( (endOfCookie=document.cookie.indexOf( ";", y )) == -1 )
+	endOfCookie = document.cookie.length;
+	return unescape( document.cookie.substring( y, endOfCookie ) );
+	}
+	x = document.cookie.indexOf( " ", x ) + 1;
+	if ( x == 0 )
+	break;
+	}
+	return "";
+	}
+ 	if ( getCookie( "Notice" ) != "done" ) {
+		//첫번째 새창으로 열릴 페이지의 경로 및 크기와 위치를 지정해 주세요.
+		noticeWindow = window.open('${cPath}/mypage/myInfo/popup1','notice','left=0, top=0, width=550,height=850');
+		noticeWindow.opener = self;
+	} 
+	if ( getCookie( "Notice2" ) != "done" ) {
+		//두번째 새창으로 열릴 페이지의 경로 및 크기와 위치를 지정해 주세요.
+		noticeWindow = window.open('${cPath}/mypage/myInfo/popup2','notice2','left=420, top=0, width=550,height=850');
+		noticeWindow.opener = self;
+	}
+	if ( getCookie( "Notice3" ) != "done" ) {
+		//두번째 새창으로 열릴 페이지의 경로 및 크기와 위치를 지정해 주세요.
+		noticeWindow = window.open('${cPath}/mypage/myInfo/popup3','notice3','left=840, top=0, width=280,height=850');
+		noticeWindow.opener = self;
+		}
+	
+// 	function setCookie( name, value, expiredays )
+// 	{
+// 	var todayDate = new Date();
+// 	todayDate.setDate( todayDate.getDate() + expiredays );
+// 	document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + todayDate.toGMTString() + ";"
+// 	} 
+// 	function closeWin()
+// 	{
+// 		if ( document.pop.Notice.checked )
+// 		setCookie( "Notice", "done" , 1);//1은 하루동안 새창을 열지 않게 합니다.
+// 		self.close();
+// 	}
+
+////////////////////////////////
+function slideStart(){
+	
+var titleMain  = $("#animatedHeading");
+var titleSubs  = titleMain.find("slick-active");
+
+if (titleMain.length) {
+
+  titleMain.slick({
+    autoplay: false,
+    arrows: false,
+    dots: false,
+    slidesToShow: 1,
+    centerPadding: "10px",
+    draggable: false,
+    infinite: true,
+    pauseOnHover: false,
+    swipe: false,
+    touchMove: false,
+    vertical: true,
+    speed: 1000,
+    autoplaySpeed: 2000,
+    useTransform: true,
+    cssEase: 'cubic-bezier(0.645, 0.045, 0.355, 1.000)',
+    adaptiveHeight: true,
+  });
+
+  // On init
+  $(".slick-dupe").each(function(index, el) {
+    $("#animatedHeading").slick('slickAdd', "<div>" + el.innerHTML + "</div>");
+  });
+
+  // Manually refresh positioning of slick
+  titleMain.slick('slickPlay');
+};
+}
+
+
+
+var noticeEle = '<div class="slick-dupe" data-no = "%N"><span class="hero__title-misc  |  animate">%T</span></div>';
+var notice = $("#animatedHeading");
+var searchForm = $("#searchForm").paging({
+	searchUI:"#searchUI",
+	searchBtn:"#searchBtn",
+	pagination:"#pagingArea",
+	pageParam:"page",
+	byAjax:true,
+	success:function(resp){
+		console.log(resp)
+		let boardList = resp.dataList;
+		let pagingHTML = resp.pagingHTML;
+		let trTags = [];
+		if(boardList.length>0){
+			$.each(boardList, function(idx, notice){
+				console.log(idx);
+				let element = noticeEle.replace("%T",notice.notice_title).replace("%N",notice.notice_no)
+				trTags.push(element);
+				
+				
+			});
+		}else{
+			trTags.push($("<tr>").html($("<td colspan='8'>").text("조건에 맞는 게시글이 없음.")));
+			$("#pagingArea").empty();
+		}
+		notice.html(trTags);
+		
+		slideStart()
+	}
+}).submit();
+
+$("#animatedHeading").on("click","div",function(){
+	let notice_no = $(this).data("no")
+	console.log(notice_no);
+	loadAssetsView(notice_no);
+}).css({
+	cursor:"pointer"
+});
+function loadAssetsView(notice_no){
+	console.log(notice_no);
+	$.ajax({
+		url : "${cPath}/mypage/myInfo/notice/"+notice_no,
+		dataType : "html",
+		success : function(resp){
+			 location.href = "${cPath}/mypage/myInfo/notice/"+notice_no
+		},
+		error : function(errorResp){
+			console.log(errorResp.status + ":" + errorResp.responseText);
+		}
+	});
+}
+
+var slideIndex = 0;
+showSlides();
+
+function showSlides() {
+  var i;
+  var slides = document.getElementsByClassName("mySlides");
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
+  slideIndex++;
+  if (slideIndex > slides.length) {slideIndex = 1}
+  slides[slideIndex-1].style.display = "block";
+  setTimeout(showSlides, 3000); // Change image every 2 seconds
+}
+</script>

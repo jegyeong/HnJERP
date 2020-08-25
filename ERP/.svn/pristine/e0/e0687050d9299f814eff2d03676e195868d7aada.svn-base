@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ERP.dao.order.IOrderModalDAO">
+	
+	<resultMap type="vo.order.EstimateVO" id="estMap" autoMapping="true">
+<!-- 		<id property="est_no" column="EST_NO"/> -->
+		<id property="est_no" column="EST_NO"/>
+		<collection property="estimateList" javaType="java.util.List" ofType="vo.order.EstimateListVO" autoMapping="true">
+			<collection property="prodList" javaType="java.util.List" ofType="vo.wareHouse.ProdVO" autoMapping="true" />
+		</collection>
+	</resultMap>
+	<select id="selectEstModal" resultMap="estMap">
+	SELECT
+	    A.EST_NO,
+	    A.EMP_NO,
+	    C.EMP_NAME,
+	    A.BUYER_NO,
+	    B.BUYER_NAME,
+	    TO_CHAR(A.EST_DATE,'YYYY-MM-DD') EST_DATE, 
+	    A.EST_PROG,
+	    D.PROD_NO, E.PROD_NAME, E.PROD_STANDARD, E.PROD_STAND_SIZE, E.PROD_OUT_PRICE,
+		D.EST_QTY
+	FROM
+<!-- 	   	OR_ESTIMATE A LEFT OUTER JOIN OR_EST_P B ON (A.EST_NO = B.EST_NO) -->
+<!-- 	    		      LEFT OUTER JOIN BUYER C ON (A.BUYER_NO = C.BUYER_NO) -->
+	    OR_ESTIMATE A LEFT OUTER JOIN BUYER B ON (A.BUYER_NO = B.BUYER_NO)
+	    			  LEFT OUTER JOIN EMPLOYEE C ON (A.EMP_NO = C.EMP_NO)
+	    			  LEFT OUTER JOIN OR_EST_P D ON (A.EST_NO = D.EST_NO)
+	    			  LEFT OUTER JOIN PROD E ON (D.PROD_NO = E.PROD_NO)
+	</select>
+	
+	<select id="selectShipModal" resultType="vo.order.ShipmentVO">
+	SELECT
+	    SHIP_NO,
+	    DELIV_NO,
+	    EMP_NO,
+	    SHIP_DATE,
+	    SHIP_P_DATE,
+	    SHIP_PROG
+	FROM
+	    OR_SHIPMENT
+	</select>
+</mapper>

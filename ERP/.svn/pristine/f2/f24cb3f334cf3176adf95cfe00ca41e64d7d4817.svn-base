@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ERP.dao.buy.IBuy_InCostDAO">
+	
+	<select id="selectInCostList" resultType="MaterialVO">
+		SELECT ROWNUM RNUM, M.MAT_NO, M.MAT_NAME, L.LPROD_NAME, M.MAT_STAND_SIZE, M.MAT_IN_COST,
+			   DECODE(M.MAT_USE, 'G001', 'YES', 'NO') MAT_USE
+		FROM MATERIAL M INNER JOIN LPROD L ON(M.LPROD_NO=L.LPROD_NO)
+	</select>
+	
+	<update id="updateInCost" parameterType="MaterialVO">
+		UPDATE MATERIAL
+		SET MAT_IN_COST = #{mat_in_cost,jdbcType=NUMERIC}
+		WHERE MAT_NO = #{mat_no,jdbcType=VARCHAR}
+	</update>
+	
+	
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ERP.dao.emp.IAttatachDAO">
+	<insert id="insertAttatchs" parameterType="NoticeVO">
+		<selectKey keyProperty="startAttNo" resultType="int" order="BEFORE">
+			SELECT NVL(MAX(ATTATCH_CODE), 0)+1 FROM ATTATCH
+		</selectKey>
+		INSERT ALL
+		<foreach collection="attatchList" item="att" index="idx">
+			INTO ATTATCH (
+			    ATTATCH_CODE,    NOTICE_NO,    ATTATCH_NAME
+			   
+			) VALUES (
+				#{startAttNo}+#{idx},    #{notice_no},    #{att.attatch_name,jdbcType=VARCHAR},    
+			)
+		</foreach>
+		SELECT * FROM DUAL
+	</insert>
+	
+	<delete id="deleteAttatchs" parameterType="NoticeVO">
+		DELETE FROM ATTATCH 
+		WHERE ATTATCH_CODE IN 
+		<foreach collection="deleteAttatches" item="delNo" open="(" separator="," close=")">
+			#{delNo}
+		</foreach>
+	</delete>
+	
+	<select id="selectAttatch" resultType="AttatchVO" parameterType="int">
+		SELECT ATTATCH_CODE,    NOTICE_NO,    ATTATCH_NAME,    
+		FROM ATTATCH
+		WHERE ATTATCH_CODE = #{attatch_code}		   
+	</select>
+	<update id="incrementDownCount">
+		UPDATE ATTATCH
+		SET ATT_DOWNCOUNT = ATT_DOWNCOUNT + 1
+		WHERE ATTATCH_CODE = #{attatch_code} 
+	</update>
+</mapper>
+
+
+
+
+
+
+
+

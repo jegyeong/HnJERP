@@ -1,0 +1,14 @@
+package ERP.dao.buy;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import vo.wareHouse.MaterialVO;
+
+@Repository
+public interface IBuy_InCostDAO {
+	
+	public List<MaterialVO> selectInCostList();
+	
+}

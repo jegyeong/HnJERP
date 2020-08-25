@@ -1,0 +1,97 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<script src="${pageContext.request.contextPath }/resources/ckeditor/ckeditor.js"></script>
+<form:form id="boardForm" modelAttribute="notice"  method="post" enctype="multipart/form-data" class="w-100"
+	action="${pageContext.request.contextPath}${currentAction}">
+<h2>공지사항 작성하기</h2>	
+<div class = 'tableStyle'>
+	<table class="table table-bordered">
+		<tr >
+			<th>제목</th>
+			<td><input type="text"  name="notice_title" class="form-control"
+				 value="${notice.notice_title }">
+			<form:errors path="notice_title" element="span" cssClass="error" /></td>
+		</tr>
+		<tr>
+			<th>작성자</th>
+		 <td><input name="emp_name"  value="${authUser.emp_name}"class="form-control" disabled="disabled">
+ 				 <input type="hidden"   name="emp_no" class="form-control" value="${authUser.emp_no }" > 
+			<form:errors path="emp_no" element="span" cssClass="error" /></td>
+		</tr>
+
+		<c:if test="${not empty notice.attatchList }">
+			<tr>
+				<th>기존파일</th>
+				<td>
+					<c:forEach items="${notice.attatchList }" var="attatch" varStatus="vs">
+						<span class="eachAttatch">${attatch.attatch_name }
+							<span class="delBtn" data-attno="${attatch.attatch_code }">[DEL]</span>${not vs.last?"&nbsp;":"" }</span>
+					</c:forEach>                                     
+				</td>
+			</tr>
+		</c:if>
+		<tr>
+			<th>첨부파일</th>
+			<td>
+				<input type="file" name="bo_files" >
+				<input type="file" name="bo_files" >
+				<input type="file" name="bo_files" >
+			</td>
+		</tr>
+		<tr>
+			<th>내용</th>
+			<td>
+				<textarea id="notice_content" class="form-control">${notice.notice_content }</textarea>
+				<form:errors path="notice_content" element="span" cssClass="error" /></td>
+		</tr>
+	</table>
+</div>
+				<input type="hidden" name="notice_content"></input>
+<div class='middleDiv'>
+				<input type="submit" class="btn btn-success" value="저장" />
+				<input type="reset" class="btn btn-warning" value="취소" />
+				<input type="button" class="btn btn-outline-secondary" value="뒤로가기" 
+					onclick="history.back();"
+				/>
+				<input type="button" class="btn btn-outline-primary" value="목록으로" 
+					onclick="location.href='<c:url value='/notice'/>';"
+				/>
+</div>
+	<c:if test="${not empty methodType }">
+		<input type="hidden" name="_method" value="${methodType }" >
+	</c:if>	
+	
+	<input type="hidden" name="emp_pass" value="${authUser.emp_pass }">
+	<input type="hidden" name="notice_no" value="${notice.notice_no }">
+<%-- 	<input type="hidden" name="notice_parent" value="${board.bo_parent }" > --%>
+
+</form:form>
+<script type="text/javascript">
+	var boardForm = $("#boardForm");
+	$(".delBtn").on("click", function(){
+		let att_no = $(this).data("attno");
+		boardForm.append(
+			$("<input>").attr({
+				type:"text"
+				, name:"deleteAttatches"
+				, value:att_no
+			})	
+		);
+		$(this).parent("span:first").remove();		
+	});
+	
+	CKEDITOR.replace( 'notice_content', {
+		// Adding drag and drop image upload.
+	      uploadUrl: '${pageContext.request.contextPath}/notice/image?command=QuickUpload&type=Files&responseType=json',
+
+	      // Configure your file manager integration. This example uses CKFinder 3 for PHP.
+	      filebrowserImageUploadUrl: '${pageContext.request.contextPath}/notice/image?command=QuickUpload&type=Images',
+} );
+	$("#boardForm").on("submit", function(event){
+		var text = $("iframe").contents().find("p").text();
+		$("input[name='notice_content']").val(text);
+	})
+	
+</script>

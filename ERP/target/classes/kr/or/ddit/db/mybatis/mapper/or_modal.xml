@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ERP.dao.order.IOrderModalDAO">
+	
+	<resultMap type="vo.order.EstimateVO" id="estMap" autoMapping="true">
+<!-- 		<id property="est_no" column="EST_NO"/> -->
+		<id property="est_no" column="EST_NO"/>
+		<collection property="estimateList" javaType="java.util.List" ofType="vo.order.EstimateListVO" autoMapping="true">
+			<collection property="prodList" javaType="java.util.List" ofType="vo.wareHouse.ProdVO" autoMapping="true" />
+		</collection>
+	</resultMap>
+	<select id="selectEstModal" resultMap="estMap">
+	SELECT
+	    A.EST_NO,
+	    A.EMP_NO,
+	    C.EMP_NAME,
+	    A.BUYER_NO,
+	    B.BUYER_NAME,
+	    TO_CHAR(A.EST_DATE,'YYYY-MM-DD') EST_DATE, 
+	    A.EST_PROG,
+	    D.PROD_NO, E.PROD_NAME, E.PROD_STANDARD, E.PROD_STAND_SIZE, E.PROD_OUT_PRICE,
+		D.EST_QTY
+	FROM
+<!-- 	   	OR_ESTIMATE A LEFT OUTER JOIN OR_EST_P B ON (A.EST_NO = B.EST_NO) -->
+<!-- 	    		      LEFT OUTER JOIN BUYER C ON (A.BUYER_NO = C.BUYER_NO) -->
+	    OR_ESTIMATE A LEFT OUTER JOIN BUYER B ON (A.BUYER_NO = B.BUYER_NO)
+	    			  LEFT OUTER JOIN EMPLOYEE C ON (A.EMP_NO = C.EMP_NO)
+	    			  LEFT OUTER JOIN OR_EST_P D ON (A.EST_NO = D.EST_NO)
+	    			  LEFT OUTER JOIN PROD E ON (D.PROD_NO = E.PROD_NO)
+    ORDER BY EST_NO DESC
+	</select>
+	
+	<resultMap type="ShipmentVO" id="shipMap" autoMapping="true">
+		<id property="ship_no" column="SHIP_NO"/>
+		<collection property="deliveryList" autoMapping="true" javaType="java.util.List" ofType="DeliveryOrderVO">
+			<collection property="order" autoMapping="true" javaType="java.util.List" ofType="OrderVO">
+				<collection property="orderList" javaType="java.util.List" ofType="OrderListVO" autoMapping="true">
+					<collection property="prodList" javaType="java.util.List" ofType="vo.wareHouse.ProdVO" autoMapping="true"/>
+				</collection>
+			</collection>
+		</collection>
+	</resultMap>
+	<select id="selectShipModal" resultMap="shipMap">
+	SELECT
+		A.SHIP_NO,
+		A.DELIV_NO,
+		D.OR_NO,
+		C.EMP_NO, C.EMP_NAME,
+		G.BUYER_NO, G.BUYER_NAME,
+		TO_CHAR(A.SHIP_DATE,'YYYY-MM-DD') SHIP_DATE,
+		TO_CHAR(A.SHIP_P_DATE, 'YYYY-MM-DD') SHIP_P_DATE,
+		A.SHIP_PROG,
+		F.PROD_NO, F.PROD_NAME, F.PROD_STANDARD, F.PROD_STAND_SIZE, F.PROD_OUT_PRICE
+	FROM
+		OR_SHIPMENT A LEFT OUTER JOIN OR_DELIVERY B ON (A.DELIV_NO = B.DELIV_NO)
+					  LEFT OUTER JOIN EMPLOYEE C ON (A.EMP_NO = C.EMP_NO)
+					  LEFT OUTER JOIN ORDERP D ON (B.OR_NO = D.OR_NO)
+					  LEFT OUTER JOIN OR_PLIST E ON (D.OR_NO = E.OR_NO)
+					  LEFT OUTER JOIN PROD F ON (E.PROD_NO = F.PROD_NO)
+					  LEFT OUTER JOIN BUYER G ON (D.BUYER_NO = G.BUYER_NO)
+	ORDER BY SHIP_NO DESC
+	</select>
+</mapper>

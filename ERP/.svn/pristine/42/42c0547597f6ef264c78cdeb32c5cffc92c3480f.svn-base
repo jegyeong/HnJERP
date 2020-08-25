@@ -1,0 +1,63 @@
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<nav class="main-header navbar navbar-expand navbar-white navbar-light fixed-top">
+  <!-- Left navbar links -->
+   <ul class="navbar-nav topUl">
+    <li class="nav-item">
+      <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block" data-url="/emp">
+      <a href="${cPath }/emp/salary/salaryInfoList" class="nav-link" style="font-size:12pt; margin:0 0 0 5px">
+	  	<img alt="" src="${cPath }/resources/img/emp.png" style="width:25px; height: 25px; margin:0 8px 0 15px;">
+	  	<span style="font-weight:900;">인사</span>
+	  </a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block" data-url="/account">
+      <a href="${cPath }/account/chit" class="nav-link" data-url="/account" style="font-size:12pt; margin:0 0 0 5px">
+       	<img alt="" src="${cPath }/resources/img/acc.png" style="width:25px; height: 25px; margin:0 8px 0 15px;">
+       	<span style="font-weight:900;">회계</span>
+      </a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block" data-url="/buy">
+       <a href="${cPath }/buy/document/form" class="nav-link" data-url="/buy" style="font-size:12pt; margin:0 0 0 5px">
+	       <img alt="" src="${cPath }/resources/img/buy.png" style="width:25px; height: 25px; margin:0 5px 0 15px;">
+	       <span style="font-weight:900;">구매</span>
+       </a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block" data-url="/order">
+      <a href="${cPath }/order/estimate" class="nav-link" data-url="/order" style="font-size:12pt; margin:0 0 0 5px">
+       	<img alt="" src="${cPath }/resources/img/deal.png" style="width:25px; height: 25px; margin:0 5px 0 15px;">
+       	<span style="font-weight:900;">영업</span>
+      </a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block" id="wareId" data-url="/ware">
+      <a href="${cPath }/ware/mat/list" class="nav-link" data-url="/wh" style="font-size:12pt; margin:0 0 0 5px">
+       	<img alt="" src="${cPath }/resources/img/mat.png" style="width:25px; height: 25px; margin:0 5px 0 15px;">
+       	<span style="font-weight:900;">자재</span>
+      </a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block" data-url="/product">
+      <a href="${cPath }/product" class="nav-link" data-url="/product" style="font-size:12pt; margin:0 0 0 5px;">
+       	<img alt="" src="${cPath }/resources/img/product.png" style="width:25px; height: 25px; margin:0 5px 0 15px;">
+       	<span style="font-weight:900;">생산</span>
+      </a>
+    </li>
+  </ul>
+<div style="position: absolute;right:20px;">
+	<form action="${cPath }/loginForm/logout" method="post">
+		<input type="submit" class="btn btn-secondary" value="로그아웃" style="height:32px;font-size:10pt;"/>
+	</form>
+</div>
+</nav>
+<script type="text/javascript">
+	var spanTag = "<span style='position:absolute; left:17px; right:0px; bottom:-8px; height:4px; background-color:#ff7f78;'></span>";
+	var currenturl = "${cPath}" + "${requestScope['javax.servlet.forward.servlet_path']}"; 
+    $(".topUl>li").each(function(){
+       let url = $(this).data("url");
+       if(url && currenturl.indexOf(url)==4){
+    	   $(this).find("a").append(spanTag);
+       }
+    });
+</script>
+

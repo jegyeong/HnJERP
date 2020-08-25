@@ -1,0 +1,213 @@
+package ERP.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import ERP.dao.IMyinfomationDAO;
+import ERP.dao.emp.IEmpListDAO;
+import ERP.dao.emp.IEmployeeDAO;
+import ERP.service.IAuthenticatieService;
+import ERP.service.emp.IEmployeeService;
+import ERP.service.emp.INoticeService;
+import ERP.service.mypage.IMyinfoService;
+import enums.ServiceResult;
+import validate.groups.UpdateGroup;
+import vo.SearchVO;
+import vo.emp.EMP_CertVO;
+import vo.emp.Emp_CareerVO;
+import vo.emp.EmployeeVO;
+import vo.emp.NoticeVO;
+
+@Controller
+@RequestMapping("/mypage/myInfo")
+public class MyPageController {
+	@Inject
+	IEmployeeDAO empdao;
+	@Inject
+	IEmpListDAO dao;
+	@Inject
+	IEmployeeService service;
+	@Inject
+	IMyinfoService myservice;
+	@Inject
+	IMyinfomationDAO infoDao;
+	@Inject
+	INoticeService noservice;
+
+	@Inject
+	private IAuthenticatieService auService;
+	
+	// 리스트 셋팅한거 
+	private void attributeSetting(Model model) {
+//		  model.addAttribute("certList", dao.selectLicensList()); //
+		model.addAttribute("posList", dao.selectPosList()); //
+		model.addAttribute("solList", dao.selectSolidList()); //
+		model.addAttribute("fullList", dao.selectFulltime()); // 
+	}
+	
+	
+	// 주요 업무리스트 보여주는거??
+//	
+//	@GetMapping("")
+//	public String myEmpInformaion( //  my page 에서 내정보 띄우는거 
+//			@RequestParam(name="page", required = false, defaultValue = "1") int currentPage,
+//			SearchVO searchVO, @ModelAttribute EmployeeVO emp,
+//			Model model ){
+//
+////		
+//		return "mypage/myEmpInformation"; //게시판 목록 리스트 
+//	}
+	
+	// 내정보 가져오는거 
+	@GetMapping("myEmpInformation")
+	public String myEmpInfomation(
+		   @RequestParam(required = false) EmployeeVO vo,
+		   HttpSession session,
+			Model model
+			) {
+		attributeSetting(model); //리스트 불러오는거 
+		return "mypage/myEmpInformation"; // 마이페이지 사원 상세정보 가져오는거 
+	}
+
+	// 내 정보 수정 
+	@ResponseBody
+	@PostMapping(value = "myEmpInformationUpdate", produces = "text/plain;charset=UTF-8")
+	public String myEmpInformaionUpdate( //  my page 에서 내정보 수정
+			HttpSession session,
+			@Validated(UpdateGroup.class) @ModelAttribute("emp") EmployeeVO emp,
+			BindingResult errors,  //@ModelAttribute 다음에 꼭 와야 함 
+			Model model ){
+		
+		ServiceResult result = null;
+
+		if(!errors.hasErrors()) {
+			 result = myservice.modifyMyinfo(emp);
+		}
+		String str = result == ServiceResult.OK? "수정성공" :"수정실패";
+		
+		if(str.equals("수정성공")){
+			auService.authenticated(emp);  // 서비스에서 불러오는거
+		 session.setAttribute("authUser", emp);
+		}
+		
+		return str; // 수정된 화면 보여지는거 
+	}
+	
+	// 내급여 조회 
+	@GetMapping("mySalaryList")
+	public String mySalaryList(){
+		return "mypage/mySalaryList"; //게시판 목록 리스트 
+	}
+	
+	@GetMapping(value="salaryInfoList",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public Map<String, List<EmployeeVO>> orReturnList(HttpSession session){
+		EmployeeVO empVO = (EmployeeVO) session.getAttribute("authUser");
+		Map<String, List<EmployeeVO>> map = new HashMap<>();
+		map.put("data", infoDao.selectMyMoney(empVO.getEmp_no()));
+		return map;
+	}
+	
+	@GetMapping("myWork")
+	public String myWork( //  my page 에서 근태 조회 띄우는거 
+			@RequestParam(name="page", required = false, defaultValue = "1") int currentPage,
+			SearchVO searchVO,
+			Model model ){
+		
+//		PagingVO<BoardVO> pagingVO = new PagingVO<>();
+//		pagingVO.setSearchVO(searchVO);
+//		pagingVO.setCurrentPage(currentPage);
+//		int totalRecord = service.readBoardCount(pagingVO);
+//		pagingVO.setTotalRecord(totalRecord);
+//		
+//		List<BoardVO> prodList = service.readBoardList(pagingVO);
+//		pagingVO.setDataList(prodList);
+//		
+//		model.addAttribute("pagingVO", pagingVO);
+//		
+		return "mypage/myWork"; //게시판 목록 리스트 
+	}
+	
+	
+	
+	@GetMapping("myNotice")
+	public String myNotice( //  my page 에서 공지사항 띄우는거 
+			@RequestParam(name="page", required = false, defaultValue = "1") int currentPage,
+			SearchVO searchVO,
+			Model model ){
+		
+			model.addAttribute("button", true);  // 공지사항에 버튼의 유무를 주어서 mypage에서는  새글 쓰기 버튼이 안보이도록 하는거 
+		
+		return "mypage/noticeList"; //게시판 목록 리스트 
+	}
+	
+	
+	@GetMapping("notice/{notice_no}")
+	public String view(@PathVariable(required = true)  int notice_no, Model model ) {
+		NoticeVO notice = noservice.readNotice(notice_no);
+		model.addAttribute("notice", notice);
+		return "mypage/noticeView";
+	}
+	
+	
+	@GetMapping("passWordChange")
+	public String passWordChange( 
+			HttpSession session,
+			@RequestParam(name="page", required = false, defaultValue = "1") int currentPage,
+			Model model ){
+		
+		return "mypage/passWordChange";  
+	}
+
+	@ResponseBody
+	@PostMapping(value = "passWordChange/update", produces = "text/plain;charset=UTF-8" )
+	public String passWordChangeUpdate( 
+			HttpSession session,
+			@Validated(UpdateGroup.class) EmployeeVO emp,
+			BindingResult errors,
+			Model model ){
+		
+			String str = null;
+			ServiceResult result = null;
+			
+			if(!errors.hasErrors()) {
+				result = myservice.modifyPassword(emp); // 서비스에서의 결과 값 받아오는거 
+				if(result == ServiceResult.OK){					
+					session.setAttribute("authUser",emp);
+					str = "수정성공";
+				}else {
+					str = "수정실패";
+				}
+				
+			}
+			
+			 
+			return str; // jsp 로 보내지는 resp
+	}
+
+	// 레프트바에서 사진을 클릭하면 메인 페이지로 이동하는거 
+	@GetMapping
+	private String mainPage() {
+		return "mypage/main";
+		
+	}
+	
+	
+}

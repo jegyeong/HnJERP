@@ -1,0 +1,121 @@
+package ERP.controller.wareHouse.outer;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import ERP.dao.wareHouse.IWareOthersDAO;
+import ERP.service.wareHouse.IOuterDocumentService;
+import enums.ServiceResult;
+import exception.DataNotFoundException;
+import vo.PagingVO;
+import vo.buy.Buy_Ret_MatVO;
+import vo.buy.Buy_ReturnVO;
+import vo.emp.EmployeeVO;
+import vo.wareHouse.OuterStoreVO;
+
+@Controller
+@RequestMapping("/ware/outer/matreturn")
+public class OuterMatReturnController {
+	
+	private static Logger logger = LoggerFactory.getLogger(OuterMatReturnController.class);
+	
+	@Inject
+	IOuterDocumentService docService;
+	
+	@Inject
+	IWareOthersDAO othersDao;
+	
+	// 4. 원자재 반품서 목록 보여주기
+	@GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public PagingVO<Buy_ReturnVO> ajaxForList(
+		@RequestParam(name="page", required = false, defaultValue = "1") int currentPage,
+		Buy_ReturnVO detailSearch, Model model
+	)throws IOException{
+		OutMatRetListView(currentPage, detailSearch, model);
+		return (PagingVO<Buy_ReturnVO>) model.asMap().get("pagingVO");
+	}
+	
+	@GetMapping("list")
+	public String OutMatRetListView(
+		@RequestParam(name="page", required = false, defaultValue = "1") int currentPage,
+		Buy_ReturnVO detailSearch, Model model)throws IOException {
+		
+		PagingVO<Buy_ReturnVO> pagingVO = new PagingVO<>(10,10);
+		pagingVO.setDetailSearch(detailSearch);
+		pagingVO.setCurrentPage(currentPage);
+		
+		int totalRecord = docService.readBuyReCnt(pagingVO);
+		pagingVO.setTotalRecord(totalRecord);
+		
+		List<Buy_ReturnVO> buyReList = docService.readBuyReList(pagingVO);
+		pagingVO.setDataList(buyReList);
+		
+		model.addAttribute("pagingVO",pagingVO);		
+		return "wh/outer/outMatReturnListView";
+	}
+	
+	// 4-1. 원자재 반품의뢰서 상세 보기
+	@GetMapping("{board_no}")
+	public String OutMatRetViewGet(
+		@PathVariable(required = true) int board_no, Model model
+		,HttpSession session
+	) {
+		EmployeeVO emp = (EmployeeVO) session.getAttribute("authUser");
+		
+		Buy_ReturnVO buyReVO = docService.readBuyReturn(board_no);
+		model.addAttribute("buyReVO",buyReVO);
+		
+		List<Buy_Ret_MatVO> buyretmatList = buyReVO.getMatList(); // 반품 원자재 목록 
+		model.addAttribute("buyretmatList",buyretmatList);
+		
+		List<OuterStoreVO> storeList = new ArrayList<>();
+		
+		for(int i=0;i<buyretmatList.size();i++) {
+			String mat_no = buyretmatList.get(i).getMat_no();
+			storeList = othersDao.outerStoreList(mat_no);
+			model.addAttribute("storeList",storeList);
+		}
+		
+		return "/wh/outer/outMatReturnModalView";
+	}
+	
+	// 5. 원자재 반품 의뢰서 토대로 원자재 출고  post
+	@PostMapping(produces = "text/plain;charset=UTF-8")
+	@ResponseBody
+	public String OutMatRetRequestGet(
+		@RequestBody Buy_ReturnVO buyReturnVO , HttpServletResponse resp
+	) throws IOException{
+		
+		String resultStr =null;
+		try {
+			ServiceResult result = docService.updateBuyReturn(buyReturnVO);
+			if(ServiceResult.OK.equals(result)) {
+				resultStr = "ok";
+			}else {
+				resultStr = "fail";
+			}
+		} catch (DataNotFoundException e) {
+			resultStr = "fail";
+		}
+		return resultStr;
+	}
+}

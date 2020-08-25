@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ERP.dao.buy.IBuy_ChartDAO">
+	
+	<select id="selectPurchaseChart" parameterType="Buy_ChartVO" resultType="Buy_ChartVO">
+		SELECT SUM(COUNT(*)) CNT, 
+			   nvl(#{year_date,jdbcType=NUMERIC}, 2020) YEAR_DATE, #{month_date,jdbcType=NUMERIC} MONTH_DATE
+		FROM BUY_PURCHASE
+		WHERE EXTRACT(YEAR from PUR_DATE) = nvl(#{year_date,jdbcType=NUMERIC}, 2020)
+		AND  EXTRACT(MONTH from PUR_DATE) = #{month_date,jdbcType=NUMERIC}
+		GROUP BY 2, 3
+	</select>
+	
+	
+</mapper>

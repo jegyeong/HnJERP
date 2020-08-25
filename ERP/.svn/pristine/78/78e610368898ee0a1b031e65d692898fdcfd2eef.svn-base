@@ -1,0 +1,23 @@
+package ERP.controller.order.ret;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import ERP.service.order.IOr_Retrun_pService;
+
+@Controller
+@RequestMapping("/order/return")
+public class Or_ReturnPModifyController {
+	
+	@Inject
+	IOr_Retrun_pService service;
+	
+	@DeleteMapping
+	public String delete() {
+		return null;
+	}
+	
+}

@@ -1,0 +1,257 @@
+ <!-- Main Sidebar Container -->
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+  <aside class="main-sidebar sidebar-dark-primary elevation-4" style="height:100vh">
+    <!-- Brand Logo -->
+    <a href="${cPath }/main" class="brand-link">
+      <img alt="로고" src="${pageContext.request.contextPath }/resources/img/logo3.png" style="width: 80px; height: 40px;">
+      <span class="brand-text font-weight-light">HnJ ERP</span>
+    </a>
+    <!-- Sidebar -->
+    <div class="sidebar">
+ 	
+ 	<div class="user-panel mt-3 pb-3 mb-3 d-flex">
+		<table style='width:100%'>
+			<tr>
+				<td>
+					&nbsp;<img id="emp_img" class='img-circle elevation-2' alt="" src="${cPath }/resources/empImg/${authUser.emp_no}">
+				</td>
+				<td>
+					<a href="${cPath }/mypage/myInfo/myEmpInformation" class="d-block">
+						${authUser.depVO.dep_name} &nbsp;ㅣ ${authUser.emp_name}
+					</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+      
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- 원자재관리 -->
+          <li class="nav-item has-treeview" data-url="/ware/mat">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie" ></i>
+              <p>
+                 	원자재 관리
+                <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="${cPath}/ware/mat/list" class="nav-link">
+                  <i class="nav-icon far fa-circle "></i>
+                  <p>원자재 목록</p>
+              
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="${cPath }/ware/mat/insert" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>원자재 등록</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          
+          <!-- 상품관리 -->
+          <li class="nav-item has-treeview" data-url="/ware/prod">
+            <a href="#" class="nav-link">
+               <i class="nav-icon fas fa-chart-pie" ></i>
+              <p>
+                 	상품관리
+                <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="${cPath}/ware/prod/list" class="nav-link">
+                  <i class="nav-icon far fa-circle "></i>
+                  <p>상품 목록</p>
+              
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="${cPath}/ware/prod/insert" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>상품 등록</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          
+           <!-- 출고 관리 -->
+          <li class="nav-item has-treeview" data-url="/ware/outer">
+            <a href="#" class="nav-link">
+               <i class="nav-icon fas fa-chart-pie" ></i>
+              <p>
+                 	출고 관리
+                <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="${cPath}/ware/outer/prod/prodlist" class="nav-link">
+                  <i class="nav-icon far fa-circle "></i>
+                  <p>생산요청 상품 목록</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="${cPath}/ware/outer/prod/pduct/list" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>생산의뢰서 목록</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="${cPath}/ware/outer/matreturn/list" class="nav-link">
+                  <i class="nav-icon far fa-circle "></i>
+                  <p>반품의뢰서 목록</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="${cPath}/ware/outer/doc/list" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>출하지시서 목록</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          
+           <!-- 입고 관리 -->
+          <li class="nav-item has-treeview" data-url="/ware/enter">
+            <a href="#" class="nav-link">
+               <i class="nav-icon fas fa-chart-pie" ></i>
+              <p>
+                 	입고관리
+                <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="${cPath }/ware/enter/buy/form" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>구매 요청 등록</p>
+                </a>
+              </li>
+            </ul>
+<!--             <ul class="nav nav-treeview"> -->
+<!--               <li class="nav-item"> -->
+<%--                 <a href="${cPath }/ware/enter/buy" class="nav-link"> --%>
+<!--                   <i class="far fa-circle nav-icon"></i> -->
+<!--                   <p>구매 요청 현황</p> -->
+<!--                 </a> -->
+<!--               </li> -->
+<!--             </ul> -->
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="${cPath}/ware/enter/mat/requestlist" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>입고 신청 목록</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          
+          <!-- 폐기 관리 -->
+          <li class="nav-item has-treeview" data-url="/ware/disuse">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie" ></i>
+              <p>
+                    폐기 관리
+                <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="${cPath}/ware/disuse/app/regist" class="nav-link">
+                  <i class="nav-icon far fa-circle "></i>
+                  <p>폐기 등록</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          
+          <!-- 창고관리 -->
+          <li class="nav-item has-treeview" data-url="/ware/warehouse">
+            <a href="#" class="nav-link">
+               <i class="nav-icon fas fa-chart-pie" ></i>
+              <p>
+                    창고 관리
+                <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="${cPath}/ware/warehouse" class="nav-link">
+                  <i class="nav-icon far fa-circle "></i>
+                  <p>창고 조회</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="${cPath}/ware/warehouse/manger/insert" class="nav-link">
+                  <i class="nav-icon far fa-circle "></i>
+                  <p>창고 등록</p>
+                </a>
+              </li>
+              
+            </ul>
+          </li>
+          
+           <!-- 현황 조회 -->
+<!--           <li class="nav-item has-treeview" data-url="/ware/chart"> -->
+<!--             <a href="#" class="nav-link"> -->
+<!--               <i class="nav-icon fas fa-chart-pie" ></i> -->
+<!--               <p> -->
+<!--                  	현황조회 -->
+<!--                 <i class="fas fa-angle-left right"></i> -->
+<!--                 </p> -->
+<!--             </a> -->
+<!--             <ul class="nav nav-treeview"> -->
+<!--               <li class="nav-item"> -->
+<%--                 <a href="${cPath }/ware/chart/enter" class="nav-link"> --%>
+<!--                   <i class="nav-icon far fa-circle "></i> -->
+<!--                   <p>입고</p> -->
+<!--                 </a> -->
+<!--               </li> -->
+<!--               <li class="nav-item"> -->
+<%--                 <a href="${cPath }/ware/chart/outer" class="nav-link"> --%>
+<!--                   <i class="nav-icon far fa-circle "></i> -->
+<!--                   <p>출고</p> -->
+<!--                 </a> -->
+<!--               </li> -->
+<!--               <li class="nav-item"> -->
+<%--                  <a href="${cPath }/ware/chart/disuse" class="nav-link"> --%>
+<!--                   <i class="nav-icon far fa-circle "></i> -->
+<!--                   <p>폐기</p> -->
+<!--                 </a> -->
+<!--               </li> -->
+<!--             </ul> -->
+<!--           </li> -->
+          
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+<script>
+var currenturl = "${cPath}" + "${requestScope['javax.servlet.forward.servlet_path']}"; 
+console.log(currenturl);
+   $("li").each(function(){
+      
+      let url = $(this).data("url")
+      if(currenturl.indexOf(url)==4){
+         $(this).addClass("menu-open").find("i").eq(0).addClass("text-info");
+         $(this).find("a").each(function(){
+           if($(this).attr("href")==currenturl)
+              $(this).find("i").eq(0).addClass("text-info");
+         });
+      }
+   });
+   
+   console.log("${authUser}");
+   
+   $(".has-treeview").on("click", function(event){
+	     $(".menu-open").not(this).find("i").eq(0).click();
+	});
+</script>

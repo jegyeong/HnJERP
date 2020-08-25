@@ -1,0 +1,74 @@
+package listener;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import vo.emp.EmployeeVO;
+
+public class Interceptor extends HandlerInterceptorAdapter{
+	
+	
+	
+@Override
+public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+		throws Exception {
+	boolean pass = false;
+	String url = parseRequestURI(request);
+	pass = url.equals("/")||url.equals("/loginForm/passWordSearch")||url.equals("/mailSender");
+	
+	
+	EmployeeVO authUser = (EmployeeVO) request.getSession().getAttribute("authUser");
+	if(authUser==null&&!pass) response.sendRedirect(request.getContextPath()+"/");
+	
+	if(!pass&&authUser!=null) {
+		if(url.contains("account") && authUser.getDep_no2().equals("회계부서")) pass = true;
+		if(url.length()>=4)
+			if(url.substring(0,4).equals("/emp") && authUser.getDep_no2().equals("인사부서")) pass = true;
+		if(url.contains("ware") && authUser.getDep_no2().equals("자재부서")) pass = true;
+		if(url.contains("product") && authUser.getDep_no2().equals("생산부서")) pass = true;
+		if(url.contains("order") && authUser.getDep_no2().equals("영업부서")) pass = true;
+		if(url.contains("buy") && authUser.getDep_no2().equals("구매부서")) pass = true;
+		if(url.contains("mypage")) pass = true;
+		if(authUser.getDep_no2()==null) pass=true;
+	}
+	
+	
+	return pass;
+}
+
+
+   
+   public boolean preHanadle(HttpServletRequest request, HttpServletResponse response, Object handler)
+         throws Exception {
+      boolean pass = true;
+      
+      String url = parseRequestURI(request);
+      EmployeeVO authUser = (EmployeeVO) request.getSession().getAttribute("authUser");
+      
+      if(!url.equals("/")&&authUser==null) pass = false;
+      if(url.equals("/main/findpassword")&&authUser==null) pass = true;
+      if(url.equals("/getImage")&&authUser==null) pass = true;
+      
+      if(!pass)
+         response.sendRedirect(request.getContextPath()+"/");
+      
+      if(authUser != null) {
+          EmployeeVO empVO = (EmployeeVO)authUser;
+          String emp_code = empVO.getEmp_no();
+//          request.setAttribute("pushDraftList", dao.selectDraftPush(emp_code));
+//          request.setAttribute("pushDraftCount", dao.selectDraftCount(emp_code));
+//          request.setAttribute("pushMessagetList", dao.selectMessagePush(emp_code));
+//          request.setAttribute("pushMessageCount", dao.selectMessageCount(emp_code));
+      }
+      return pass;
+      
+   }
+   public static String parseRequestURI(HttpServletRequest req) {
+      String uri = req.getRequestURI().split(";")[0];
+      int length = req.getContextPath().length();
+      uri = uri.substring(length);
+      return uri;
+   }
+}

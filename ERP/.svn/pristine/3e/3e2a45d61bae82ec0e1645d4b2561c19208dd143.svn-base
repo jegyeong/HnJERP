@@ -1,0 +1,480 @@
+<%--
+* [[개정이력(Modification Information)]]
+* 	수정일                 수정자      	수정내용
+* ----------  ---------  -----------------
+* 2020. 7. 5      	이제경       	최초작성
+* Copyright (c) 2020 by DDIT All right reserved
+ --%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+
+<h1 style="padding-left: 30px;padding-top: 25px;">주문서폼</h1>
+
+<style>  
+table { border-collapse:collapse; }  
+th, td { border:1px solid gray; }
+</style>
+
+
+<form:form id="orderForm" modelAttribute="order" method="post" enctype="multipart/form-data" class="#"
+	action="${cPath }/order/order/${order.or_no }">
+	
+	<c:if test="${not empty order.or_no }">
+		<input type="hidden" name="_method" value="${'delete' eq methodType ?'delete':'put' }">
+	</c:if>
+	<input class="form-control" type="hidden" name="currentPage" value="${param.currentPage }"/>
+
+<div style="background-color: white; margin: 30px; margin-right: 55px;">
+	<table class="table table-bordered">
+		<tr>
+			<c:if test="${order.est_no }"></c:if>
+			<th><spring:message code="estimate.est_no" />
+				<input type="button" id="est_noBtn" class="btn btn-outline-primary" style="margin: 5px;" value="찾기"/></th>
+			<td><input type="text" id="est_no" name="est_no" class="est_no" value="${order.est_no }"></td>
+		</tr>
+		<tr>
+			<th><spring:message code="date" /></th>
+			<td><input type="date" name="or_date" class="or_date" value="${shipment.deliveryList[0].order.or_date }"></td>
+		</tr>
+		<tr>
+			<th><spring:message code="buyer.buyer_name" />
+				<input type="button" id="buyerBtn" class="btn btn-outline-primary" style="margin: 5px;" value="찾기"/>
+			</th>
+			<td><input type="text" name="buyer_no" id="buyer_no" value="${order.buyer_no }" placeholder="거래처코드" />
+				<input type="text" id="buyer_name" value="${order.buyer_name }" placeholder="거래처명" /></td>
+		</tr>
+			<tr>
+			<th><spring:message code="emp.emp_name" />
+				<input type="button" id="empBtn" class="btn btn-outline-primary" style="margin: 5px;" value="찾기"/>
+				
+			</th>
+			<td><input type="text" name="emp_no" id="empNo" value="${order.emp_no }" placeholder="담당자코드"/>
+				<input type="text" id="empName" value="${order.emp_name }" placeholder="담당자명" /></td>
+		</tr>
+		<tr>
+			<th><spring:message code="buyer.buyer_zip" /></th>
+			<td><input type="text" name="buyer_zip" value="${order.buyerVO.buyer_zip }"></td>
+		</tr>
+		<tr>
+			<th><spring:message code="buyer.buyer_addr" /></th>
+			<td><input type="text" name="buyer_addr" value="${order.buyerVO.buyer_addr }"></td>
+		</tr>
+		<tr>
+			<th><spring:message code="order.or_req_date" /></th>
+			<td><input type="date" name="or_req_date" value="${order.or_req_date }"></td>
+		</tr>
+	</table>
+</div>
+<div style="background-color: white; margin: 30px; margin-right: 55px;">
+	<table class="table table-bordered" id="prodTable" style="width: 822px;">
+		<thead>
+			<tr>
+				<td id="hid">
+					<select class="dynamicElement" id="selectLprod_no" style="margin: 5px;"
+						data-url="<c:url value='/order/estimate/prod/lprod'/>">
+						<option value="">상품분류</option>
+					</select> 
+
+					<select class="dynamicElement" id="selectProd_no" style="margin: 5px;"
+						data-url="<c:url value='/order/estimate/prod/prod'/>">
+						<option value="">상품명</option>
+					</select>
+					<input type="button" value="품목추가" class="btn btn-outline-success" style="margin: 5px;" onclick="addProd()">
+				</td>	
+<!-- 				<td id="addProd"> -->
+<!-- 					 <input type="button" value="품목추가" onclick="addProd()"> -->
+<!-- 				</td> -->
+			</tr>		
+		
+		</thead>
+
+		<tbody>
+			<tr>
+				<td>
+				<table id="orderTable">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th><spring:message code="prod_code" /></th>
+							<th><spring:message code="prod_name" /></th>
+							<th><spring:message code="prod_standard" />단위</th>
+							<th><spring:message code="prod_qty" /></th>
+							<th><spring:message code="prod_price" /></th>
+							<th><spring:message code="prod_totalprice" /></th>
+						</tr>
+					</thead>
+					<tbody id="listBody">
+						<c:choose>
+							<c:when test="${not empty order }">
+								<c:if test="${order.orderList!=null }">
+								<c:forEach items="${order.orderList }" var="list">
+									<c:if test="${list.prodList!=null }">
+									<c:forEach items="${list.prodList }" var="pList">
+										<tr>
+											<td><input type="checkbox" name="inputChk"></td>
+											<td><input type="text" value="${pList.prod_no }" name="prod_no" class="prodNo" readonly="readonly"></td>
+											<td class="prodName">${pList.prod_name }</td>
+											<td>${pList.prod_standard }${pList.prod_stand_size }</td>
+											<td><input type="text" value="${list.orp_qty }" class="orpQty" name="orp_qty"></td>
+											<td class="prodOutPrice">${pList.prod_out_price }</td>
+<%-- 											<td><input type="text" value="${pList.prod_validity }" name="prod_validity" readonly="readonly"></td> --%>
+											<td><input type="text" value="${pList.prod_out_price*list.orp_qty }" name="orp_price" class="orpPrice" readonly="readonly"></td>
+										</tr>
+									</c:forEach>
+									</c:if>
+								</c:forEach>	
+								</c:if>
+							</c:when>
+						</c:choose>
+					
+					</tbody>
+					
+				</table>
+						주문서 총금액 : <span id="orp_totalPrice"></span>
+			</td>
+		</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td id="deleteProd">
+					<input type="button" id="deleteProdBtn" value="품목삭제" class="btn btn-outline-danger" onclick="delProd()">
+				</td>
+<!-- 				<td colspan="1"> -->
+<!-- 					<input type="submit" class="btn btn-dark" value="저장">  -->
+<!-- 					<input type="reset" class="btn btn-dark" value="초기화">  -->
+<%-- 					<input type="button" class="btn btn-dark" value="목록으로" onclick="location.href='<c:url value="/order/order"/>'" /> --%>
+<!-- 				</td> -->
+			</tr>
+		</tfoot>
+	</table>
+</div>
+<div id="button"  style="margin: 30px; margin-right: 55px;">
+	<input type="submit" class="btn btn-success" value="저장"> 
+	<input type="reset" class="btn btn-dark" value="초기화"> 
+	<input type="button" class="btn btn-dark" value="목록으로" onclick="location.href='<c:url value="/order/order"/>'" />	
+</div>
+</form:form>
+
+
+<!-- 거래처 모달창 -->
+<div class="modal fade" id="exampleModal"  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      
+      </div>
+      <div class="modal-footer">
+<!--       	<button type="button" id="matAddBtn" class="btn btn-primary mr-2" data-dismiss="modal">추가</button> -->
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript" src="${cPath}/resources/js/modalView.js"></script>
+<script type="text/javascript" src="${cPath}/resources/js/ordermodalView.js"></script>
+<script type="text/javascript"src="${pageContext.request.contextPath }/resources/js/dynamicSelect.js?time=${System.currentTimeMillis()}"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/resources/js/paging.js?time=${System.currentTimeMillis()}"></script>
+<script type="text/javascript">
+
+//행추가삭제---------------------------------------------------------------------------------------------
+// 	function addRow(){
+// 		var tableData = document.getElementById('orderTable');
+// 		var row = tableData.insertRow(tableData.rows.length);
+		 
+// 		$("#orderTable").append("<tr><td><input type='text'/></td><td><input type='text'/></td><td><input type='text'/></td><td><input type='text'/></td><td><input type='text'/></td><td><input type='text'/></td><td><input type='text'/></td></tr>")
+		
+// 	}
+// 	function delRow(){
+// 		var tableData = document.getElementById('orderTable');
+		
+// 		// jquery 로 테이블 삭제 
+// 		if($("#orderTable tr").length < 3)
+// 		{
+// 			return;
+// 		}
+// 		$("#orderTable tr:last").remove();
+		
+// 	}
+
+//찾기버튼클릭---------------------------------------------------------------------------------------------
+// 	$("#est_no").on("click", function(){
+// 		loadEstList();
+// 	});
+	
+// 	function loadEstList(){
+// 		$.ajax({
+// 			url : "<c:url value='order/orderModalEst'/>",
+// 			dataType : "html",
+// 			success : function(resp){
+// 				sampleModal.find(".modal-body").html(resp);
+// 				sampleModal.modal("show");
+// 			},
+// 			error : function(errorResp) {
+// 				console.log(errorResp.status + ":" + errorResp.responseText);
+// 			}
+// 		});
+// 	}
+
+// //품목삭제---------------------------------------------------------------------------------------------
+
+// 	function delProd(){
+// 		var listBody = document.getElementById('listBody');
+// 		var lastRow = listBody.rows.length;
+// 		alert(lastRow);
+// 		var confirm_val = confirm("선택한 상품을 삭제하시겠습니까?");
+// 		if(confirm_val){
+// 			for(var i=lastRow; i>=1; i--){
+// 				if($("#listBody").find("input:checkbox").eq(i-1).is(":checked")){
+// 				alert("선택");
+// 					listBody.deleteRow(i-1);
+// // 					index--;
+// 				}
+// 			}
+// 		}
+
+// 	}
+	
+//거래처, 담당자 모달---------------------------------------------------------------------------------------------
+
+   var exampleModal = $("#exampleModal").modal({
+		show:false
+	}).on("hidden.bs.modal", function(){
+		exampleModal.find(".modal-body").empty();
+	});
+   //사원 목록 모달창
+   modalView({
+	  noText : "#empNo",      //사원 클릭 시, 입력될 태그 지정
+	  nameText : "#empName",  //사원 클릭 시, 입력될 태그 지정
+	  clickBtn : "#empBtn",        //모달창을 띄울 버튼 지정
+      urlPath : "${cPath}/buy/document/empModal",
+      title:"사원 목록"				//제목
+   });
+   //거래처 목록 모달창
+   modalView({
+	  noText : "#buyer_no",      //사원 클릭 시, 입력될 태그 지정
+	  nameText : "#buyer_name",  //사원 클릭 시, 입력될 태그 지정
+	  clickBtn : "#buyerBtn",         //모달창을 띄울 버튼 지정
+      urlPath : "${cPath}/buy/document/buyerModal",
+      title:"거래처 목록"				//제목
+   });
+   
+   //견적서모달창
+   modalView({
+	  noText : "#est_no",      	//견적서클릭시, 입력될 태그 지정
+// 	  nameText : "#buyer_name", //견적서 클릭 시, 입력될 태그 지정
+	  buyerNoText : "#buyer_no",
+	  buyerNameText : "#buyer_name",
+	  empNoText : "#empNo",
+	  empNameText : "#empName",
+	  clickBtn : "#est_noBtn",         //모달창을 띄울 버튼 지정
+      urlPath : "${cPath}/order/modal/estModal",
+      title:"견적서 목록",				//제목
+      orderTableText : "#orderTable"
+   });
+   
+   
+//상품추가---------------------------------------------------------------------------------------------
+ 	var index=0;
+	function addProd(){
+		//중복 상품 추가 방지
+		var prodNo =  $("#selectProd_no").val();
+		console.log(prodNo);
+		
+		if(prodNo == '') {
+			alert('상품을 선택해주세요 .');
+			return;
+		}
+		
+		var flag = true;
+		
+		$(document).find(".prodNo").each(function(idx, item){
+			if($(this).val() == prodNo){
+				alert("중복된 상품이 존재합니다.");
+				flag = false;
+				return;
+			}
+		});
+		
+		if(flag){
+				$.ajax({
+					type:"get",
+					url:"${cPath}/order/estimate/prod/"+prod_no
+				}).done(function(resp){
+						let prod = resp;
+						var trTags = [];
+								trTag = $("<tr>").append(
+										$("<td>").html($("<input>").attr({type:"checkbox", name:"inputChk"})),
+										$("<td>").html($("<input>").addClass("prodNo").attr({type:"text", name:"prod_no", readonly:"readonly"}).val(prod.prod_no)),
+										$("<td>").text(prod.prod_name),
+										$("<td>").text(prod.prod_standard).attr("name", "prod_standard"),
+										$("<td>").html($("<input>").addClass("orpQty").attr("type",'text').attr("name","orp_qty")),
+										$("<td>").addClass("prodOutPrice").text(prod.prod_out_price),
+// /										$("<td>").text(prod.prod_totalPrice),
+// 										$("<td>").text(prod.prod_validity),
+										$("<td>").html($("<input readonly/>").addClass("orpPrice").attr({type:"text", name:"orp_price"}))
+										.data("prod_no", prod.prod_no));
+// 							totalPrice(trTag, index);
+								index++;
+							$("#listBody").append(trTag);
+// 							alert(index);
+// 							alert(result);
+// 							$(select).prop("select[name=prod_no]",0);
+// 							$(select).prop("select[name=lprod_no]",0);
+
+
+
+				});
+	}
+	}
+
+	
+//주문금액합계계산
+// 	var result="";
+// 	function totalPrice(trTag, index){
+// 		let qty = trTag.find("input").eq(2).on("change", function(){
+// 			var num1 = trTag.find("td").eq(5).text();  //가격
+// 			var num2 = qty.val();						//수량
+// 			result = num1*num2;
+// 			alert(result);
+// 			trTag.find($("input")).eq(3).val(result);
+			
+// 		});
+// 	} 
+	
+//상품추가---------------------------------------------------------------------------------------------
+		
+		var optionPtrn = "<option value='%V' %S>%T</option>";
+		var lpord_noTag = $("#selectLprod_no").data("success", function(resp) {
+			var html = "";
+			$.each(resp, function(idx, estimate) {
+				html += optionPtrn.replace("%V", estimate.lprod_no)
+									.replace("%T", estimate.lprod_name);
+			});
+				lpord_noTag.append(html);
+				
+		}).on("change", function() {
+		
+			let lprod_no = $(this).val();
+
+			prod_noTag.trigger("renew", {
+				lprod_no : lprod_no
+			});
+
+		});
+		
+	 	var prod_no="";
+		var prod_noTag = $("#selectProd_no").data("success", function(resp) {
+			var html = "<option value>상품명</option>";
+			$.each(resp, function(idx, estimate) {
+				html += optionPtrn.replace("%V", estimate.prod_no)
+								.replace("%T", estimate.prod_name)
+								.replace("%S", estimate.prod_no == "{estimate.prod_no}"?"selected":"");
+			});
+			prod_noTag.html(html);
+			
+		}).on("change", function(){
+			prod_no = $(this).val();
+			
+			console.log(prod_no)
+			
+		});		
+			var listBody = $("#listBody");
+			
+				var data1 = null;
+				var data2 = $("#selectProd_no").clone();
+//	 			listBody.html(trTag);
+
+		$(".dynamicElement").dynamicSelect();
+
+   
+//유효성검사---------------------------------------------------------------------------------------------
+	
+	//꼭필요한것 OR_NO, BUYER_NO, EMP_NO, EST_NO,
+	//OR_DATE, OR_REQ_DATE, OR_STATUS
+	//상품 목록 : ORP_NO, PROD_NO, OR_NO, ORP_QTY, ORP_PRICE
+	$("#orderForm").on("submit", function(){
+// 		alert("검사");
+		//번호 검사 (수정때만 필요)
+// 		var or_no = $("#or_no").val();
+		
+		//거래처검사
+		var buyer_no = $("#buyer_no").val();
+		if(buyer_no == ""){
+ 			alert("거래처를 검색해 주세요");
+ 			return false;
+ 		}
+		
+		//사원검사
+		var emp_no = $("#empNo").val();
+ 		if(emp_no == ""){
+ 			alert("담당자를 검색해 주세요");
+ 			return false;
+ 		}
+		
+ 		//상품검사
+ 		var prodNoExist = $("#listBody").find("input[name=prod_no]").val();
+//		var prodNoExist = $("#listBody").childrens("tr").find("input[class=prodNo]");
+// 		alert("상품 있음? : "+prodNoExist);
+		if(prodNoExist == null){
+//  		alert("상품검사");
+			alert("상품을 입력해주세요");
+			return false;
+		}
+		
+ 		//수량검사
+		//리턴 값을 넣을 val 변수
+ 		var val = true;
+ 		$.each($(".orpQty"),function(index, orp_qty){
+//  			alert("이치문")
+ 			if($(orp_qty).val() == ''){
+//  				alert("이치문 안에 이프문");
+//  				alert(val);
+ 				alert((index+1)+"번째 상품 수량을 입력해주세요");
+ 				val = false;
+ 				return false;
+ 			}
+ 		});
+ 		if(!val) return false;
+		
+	});
+
+//수량수정시값다시계산-----------------------------------------------------
+//+주문금액 전체
+			
+		$("#listBody").on("change keyup paste",".orpQty", function(){
+			let price = $(this).parent().next().eq(0).text();
+// 		 		alert(price);
+			let qty = $(this).val();
+
+				$(this).parent().parent().find($(".orpPrice")).val(price*qty);
+				
+				//총금액
+				var orp_totalPrice = 0;
+				$.each($(".orpPrice"), function(index, orp_price){
+					var orp_price = $(orp_price).val() * 1;
+						orp_totalPrice += orp_price;
+				});
+				
+				//테이블에 붙여주기
+				$("#orp_totalPrice").text(orp_totalPrice);
+			
+		});
+		
+		//처음부터 계속 변하게 하려고 바뀌는것처럼 셋팅해줌
+		$("input[name='orp_qty']").change();
+			
+
+</script>
+
+
+

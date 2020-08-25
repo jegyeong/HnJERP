@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+<!-- 암호화 (4가지) -->
+	<util:map id="passwordEncoders" map-class="java.util.LinkedHashMap">
+		<entry key="bcrypt">
+			<bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+		</entry>
+		<entry key="scrypt">
+			<bean class="org.springframework.security.crypto.scrypt.SCryptPasswordEncoder" />
+		</entry>
+		<entry key="pbkdf">
+			<bean class="org.springframework.security.crypto.password.Pbkdf2PasswordEncoder" />
+		</entry>
+		<entry key="sha512">
+			<bean class="org.springframework.security.crypto.password.MessageDigestPasswordEncoder" 
+				c:algorithm="Sha-512"
+				p:encodeHashAsBase64="true"
+			/>
+		</entry>
+	</util:map>
+	
+<!-- 비번에 사용할 암호화 -->
+<!-- 	<bean id="passwordEncoder" class="org.springframework.security.crypto.password.DelegatingPasswordEncoder"  -->
+<!-- 		c:idForEncode="sha512" -->
+<!-- 		c:idToPasswordEncoder-ref="passwordEncoders" -->
+<!-- 	/> -->
+   <bean id="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder" factory-method="getInstance"/>
+
+	
+	<!-- ERP.security.service 패키지 내에 있음 -->
+	<bean id="authenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider" 
+		p:userDetailsService-ref="authenticateServiceImpl"
+		p:hideUserNotFoundExceptions="false"
+		p:passwordEncoder-ref="passwordEncoder"
+	/>
+	
+	
+	<!-- authenticate객체 주입 : 인증처리 -->
+	<security:authentication-manager erase-credentials="true" id="authID">
+		<security:authentication-provider ref="authenticationProvider"/>
+	</security:authentication-manager>
+
+	<!-- 여기까지가 로그인 기능! -->
+
+	
+	<!-- 로그인 실패시, 전달할 메시지(시큐리티에서 제공하는 메시지들) -->
+	<bean id="messageSource" class="org.springframework.security.core.SpringSecurityMessageSource" 
+		p:basename="org.springframework.security.messages"
+	/>
+	<bean id="messageSourceAccessor" class="org.springframework.context.support.MessageSourceAccessor" 
+		c:messageSource-ref="messageSource"
+	/>  
+
+<!-- springSecurityFilterChain 을 타지 않을 리퀘스트 지정. -->
+	<security:http pattern="*.js" security="none"/>
+	<security:http pattern="*.html" security="none"/>
+	<security:http pattern="/resources/**" security="none"/>
+	
+	<bean id="authenticationSuccessHandler" class="security.CustomAuthenticationSuccessHandler" 
+		p:defaultTargetUrl="/main"
+		p:alwaysUseDefaultTargetUrl="false"
+	/>
+	
+	<!-- 타일즈 매핑 걸기 : loginForm/login.jsp 대신 /사용 -->
+<!-- 				default-target-url="/mypage/main"  -->
+	<security:http auto-config="true" use-expressions="true" authentication-manager-ref="authID">
+			<security:form-login login-page="/" 
+				username-parameter="emp_no"
+				password-parameter="emp_pass"
+				login-processing-url="/login"
+				authentication-failure-url="/?error=true"
+				authentication-success-handler-ref="authenticationSuccessHandler"
+			/>
+			<security:csrf disabled="true"/>
+			<!-- logout-success-url : 로그아웃 성공시, 이동할 url 주소 -->
+			<security:logout logout-url="/loginForm/logout" logout-success-url="/" invalidate-session="true" />
+			
+			<security:intercept-url pattern="/qrCode" access="permitAll"/>
+			<security:intercept-url pattern="/loginForm/passWordSearch" access="permitAll"/>
+			<security:intercept-url pattern="/emp/work" access="isAuthenticated()"/>
+			<security:intercept-url pattern="/buy/document/empModal" access="isAuthenticated()"/>
+			<security:intercept-url pattern="/buy/document/matModal" access="isAuthenticated()"/>
+			<security:intercept-url pattern="/buy/document/buyerModal" access="isAuthenticated()"/>
+			<security:intercept-url pattern="/emp/register/calendar/**" access="isAuthenticated()"/>
+			<security:intercept-url pattern="/emp/manage/departmentList" access="isAuthenticated()"/>
+			<security:intercept-url pattern="/buyer/**" access="hasAnyRole('ROLE_BUY','ROLE_ADMIN')"/>
+			<security:intercept-url pattern="/buy/**" access="hasAnyRole('ROLE_BUY','ROLE_ADMIN')"/>
+			<security:intercept-url pattern="/emp/**" access="hasAnyRole('ROLE_EMP','ROLE_ADMIN')"/>
+			<security:intercept-url pattern="/ware/**" access="hasAnyRole('ROLE_WARE','ROLE_ADMIN')"/>
+			<security:intercept-url pattern="/product/**" access="hasAnyRole('ROLE_PRODUCT','ROLE_ADMIN')"/>
+			<security:intercept-url pattern="/account/**" access="hasAnyRole('ROLE_ACCOUNT','ROLE_ADMIN')"/>
+			<security:intercept-url pattern="/order/**" access="hasAnyRole('ROLE_ORDER','ROLE_ADMIN')"/>
+			<security:intercept-url pattern="/*/**" access="isAuthenticated()"/>
+			<security:headers>
+				<security:frame-options disabled="true"/>
+			</security:headers>
+			<security:access-denied-handler error-page="/errorPage"/>
+			
+<!-- 			<security:cors /> -->
+	</security:http>
+	
+	<!-- 상위 컨테이너에서만 사용가능. -->
+	<security:global-method-security
+		pre-post-annotations="enabled"
+		secured-annotations="enabled"
+	/>
+</beans>

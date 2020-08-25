@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ERP.dao.order.IOrderModalDAO">
+	
+	<select id="selectEstModal" resultType="vo.order.EstimateVO">
+	SELECT
+	    A.EST_NO,
+	    A.EMP_NO,
+	    C.EMP_NAME,
+	    A.BUYER_NO,
+	    B.BUYER_NAME,
+	    A.EST_DATE,
+	    A.EST_PROG
+	FROM
+<!-- 	   	OR_ESTIMATE A LEFT OUTER JOIN OR_EST_P B ON (A.EST_NO = B.EST_NO) -->
+<!-- 	    		      LEFT OUTER JOIN BUYER C ON (A.BUYER_NO = C.BUYER_NO) -->
+	    OR_ESTIMATE A LEFT OUTER JOIN BUYER B ON (A.BUYER_NO = B.BUYER_NO)
+	    			  LEFT OUTER JOIN EMPLOYEE C ON (A.EMP_NO = C.EMP_NO)
+	</select>
+	
+	<select id="selectShipModal" resultType="vo.order.ShipmentVO">
+	SELECT
+	    SHIP_NO,
+	    DELIV_NO,
+	    EMP_NO,
+	    SHIP_DATE,
+	    SHIP_P_DATE,
+	    SHIP_PROG
+	FROM
+	    OR_SHIPMENT
+	</select>
+</mapper>

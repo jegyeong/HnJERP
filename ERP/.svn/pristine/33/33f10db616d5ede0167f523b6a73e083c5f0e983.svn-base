@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper  namespace="ERP.dao.ICalendarDAO">
+<insert id="insertCalendar"  parameterType="CalendarVO">
+	<selectKey keyProperty="calendar_no" resultType="int" order="BEFORE">
+		SELECT TO_NUMBER(NVL(MAX(calendar_no),0))+1 FROM  CALENDAR
+	</selectKey>
+		INSERT INTO calendar
+		    (CALENDAR_NO,  CALENDAR_TITLE, CALENDAR_CONTENT, USERNAME, BACKGROUND,
+		        CALENDAR_DATE, CALENDAR_START, CALENDAR_END)
+		VALUES(
+		    #{calendar_no,jdbcType=NUMERIC}, #{calendar_title,jdbcType=VARCHAR}, #{calendar_content,jdbcType=VARCHAR},
+		    #{username, jdbcType=VARCHAR}, #{background, jdbcType=VARCHAR},
+		   SYSDATE, to_date(#{calendar_start,jdbcType=DATE},'YYYY-MM-DD hh24:mi'), to_date(#{calendar_end,jdbcType=DATE},'YYYY-MM-DD hh24:mi')
+		
+		)
+</insert>
+
+<select id="selectCalendarList" resultType="CalendarVO" parameterType="CalendarVO">
+	select  CALENDAR_NO, EMP_NO, CALENDAR_TITLE, CALENDAR_CONTENT , USERNAME, BACKGROUND,
+			to_char(CALENDAR_DATE,'YYYY-MM-DD hh24:mi') CALENDAR_DATE, to_char(CALENDAR_START,'YYYY-MM-DD hh24:mi') CALENDAR_START, to_char(CALENDAR_END,'YYYY-MM-DD hh24:mi') CALENDAR_END
+	from calendar
+</select>
+
+
+</mapper>

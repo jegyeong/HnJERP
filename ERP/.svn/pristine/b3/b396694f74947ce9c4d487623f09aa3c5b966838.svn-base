@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ERP.dao.IMyinfomationDAO">
+	
+	<resultMap type="EmployeeVO" id="empMap" autoMapping="true" >
+		 <id property="emp_no" column="EMP_NO" /> 
+		<collection property="empCertVOList" javaType="java.util.List" ofType="vo.emp.EMP_CertVO" autoMapping="true"/>	
+		<collection property="careerVOList" javaType="java.util.List" ofType="vo.emp.Emp_CareerVO" autoMapping="true"/>
+		<collection property="eduVOList" javaType="java.util.List" ofType="EducationVO" autoMapping="true"/>
+		<collection property="depVO" autoMapping="true"  javaType="DepartmentVO" />
+		<collection property="posVO" autoMapping="true" javaType="PositionVO"/>
+	</resultMap>
+
+
+	<!-- 사원정보 불러오는거 -->
+	<select id="selectMyInfo" resultMap="empMap" parameterType="string">
+		SELECT DISTINCT
+			a.EMP_NO     , a.EMP_NAME   , 	a.EMP_EN_NAME, 	a.EMP_REGNO  , 	a.EMP_PHONE  , 	a.EMP_EMAIL  ,
+			a.EMP_ADDR   , 	to_char(a.HIRE_DATE, 'YYYY-MM-DD') HIRE_DATE , 	a.EMP_GEN    , 	a.COUNTRY    , 	a.BANK       , 	a.EMP_BANKNO ,
+			a.SOLDIER    , 	a.FULLTIME   , 	a.EMP_PASS   , 	a.EMP_ZIP    , 	a.EMP_ADDR2  , 	a.EMP_IMG    , to_char(a.EMP_BIRTHDAY,'YYYY-MM-DD') EMP_BIRTHDAY,
+			a.BANK_IMG   , 	 b.DEP_NAME , b.dep_no , j.dep_name dep_no2 , c.pos_name pos_no, 	d.edu_name, d.major, d.graduate,
+			 f.CERT_NO, to_char(f.CERT_DATE, 'YYYY-MM-DD') CERT_DATE , f.CERT_TEXT, 	f.CERT_SECTOR, f.ISSUE_AGENCY, g.name,
+			e.COMPANY, e.CAREER_TASK, e.WORK_YEAR, e.FINAL_POSITION
+		FROM EMPLOYEE a
+			inner join department b on(a.dep_no = b.dep_no)
+			inner join position c on(a.pos_no = c.pos_no)
+			inner join rule g on (a.fulltime = g.code)
+			left outer join education d on(a.emp_no = d.emp_no)
+			left outer join emp_career e on(a.emp_no = e.emp_no)
+			left outer join emp_cert f on(a.emp_no = f.emp_no)
+		
+			left outer join department j on (b.dep_no2=j.dep_no)<!-- 인사부서를 가져오기 위해서 쓴거 -->
+			
+		WHERE a.emp_no=#{emp_no}
+	</select>
+
+
+	<!-- 자격증 -->
+	<select id="selectCerNO" resultType="int">
+		SELECT NVL(MAX(CERT_NO), 0)+1 FROM EMP_CERT
+	</select>
+	
+	<update id="updateMyInfo" parameterType="EmployeeVO">
+		update EMPLOYEE
+		set 
+			EMP_NAME =  #{emp_name},
+		  	EMP_EN_NAME = #{emp_en_name},
+		  	EMP_PHONE = #{emp_phone},
+		  	EMP_EMAIL =   #{emp_email},  
+		  	EMP_ADDR = 	 #{emp_addr},
+		  	HIRE_DATE =  TO_DATE(#{hire_date},'YYYY-MM-DD'),
+			EMP_GEN =  #{emp_gen},
+			COUNTRY =   #{country}, 
+			BANK = 			#{bank},
+			SOLDIER = 	#{soldier},
+			FULLTIME = 	#{fulltime},
+		    EMP_ZIP =    #{emp_zip},   
+		    EMP_ADDR2 = #{emp_addr2},
+		    EMP_BIRTHDAY = TO_DATE(#{emp_birthday}, 'YYYY-MM-DD')
+		WHERE EMP_NO =#{emp_no}
+	
+	</update>
+	
+	
+	<!-- 수정할때 자격증  셀렉트박스 수정시  -->
+	<insert id="insertCer" parameterType="EmployeeVO">
+	 	INSERT ALL
+			<if test="empCertVOList != null">
+				<foreach collection="empCertVOList" item="licodes" index="idx" >
+				<if test="licodes.cert_no != null" >
+				INTO EMP_CERT( 
+						CERT_NO, 	EMP_NO, 		CERT_DATE, 
+						CERT_TEXT,  CERT_SECTOR, 	ISSUE_AGENCY
+					)VALUES(
+						#{licodes.cert_no,jdbcType=NUMERIC}, 	#{emp_no}, 				TO_DATE(#{licodes.cert_date},'YYYY-MM-DD'),
+						#{licodes.cert_text}, 	#{licodes.cert_sector}, #{licodes.issue_agency}
+				)
+				</if>
+				</foreach>
+			</if>
+			<if test="eduVOList != null">
+					<foreach collection="eduVOList" item="sccodes">
+					<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(sccodes.edu_name)" >
+						INTO  EDUCATION(
+								EMP_NO, 	EDU_NAME, 		MAJOR,	 	GRADUATE
+						)VALUES(
+								#{emp_no,jdbcType=VARCHAR}, 	#{sccodes.edu_name,jdbcType=VARCHAR}, 	#{sccodes.major,jdbcType=VARCHAR},	 #{sccodes.graduate}
+						)
+						</if>
+					</foreach>
+			</if>
+			
+			<if test="careerVOList != null">
+					<foreach collection="careerVOList" item="cacodes">
+						<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(cacodes.company)" >
+						INTO EMP_CAREER(
+							EMP_NO, 	COMPANY, 		CAREER_TASK, 
+							WORK_YEAR, 	FINAL_POSITION
+						)VALUES(
+							#{emp_no,jdbcType=VARCHAR}, #{cacodes.company,jdbcType=VARCHAR}, 	#{cacodes.career_task,jdbcType=VARCHAR}, 
+							#{cacodes.work_year,jdbcType=VARCHAR}, 	#{cacodes.final_position,jdbcType=VARCHAR}
+						)
+						</if>
+					</foreach>
+			</if>
+	
+		SELECT * FROM DUAL
+	</insert>	
+	
+	<select id="selectMyMoney" parameterType="string" resultType="Salary_TransVO">
+		select	b.my_basicsalary, b.extension_pay, b.deduction, b.actual_payment, to_char(b.sal_date,'YYYY-MM-DD') sal_date
+		  from  	employee a inner join salary_trans b on(a.emp_no = b.emp_no)
+		where 	a.emp_no = #{emp_no}
+		
+	</select>	
+
+</mapper>
